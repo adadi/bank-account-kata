@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: bank-account-kata
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    com.kata.bankaccount: DEBUG
+    org.springframework.web: INFO
+
+server:
+  port: 8080
+  error:
+    include-message: always
+    include-binding-errors: always
