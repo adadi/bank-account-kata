@@ -18,6 +18,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
@@ -85,4 +86,19 @@ class DepositIntegrationTest {
         assertThat(accountEntity.getTransactions()).hasSize(1);
         assertThat(accountEntity.getTransactions().get(0).getType()).isEqualTo(TransactionType.DEPOSIT);
     }
-}
+
+    @Test
+    void deposit_nonExistentAccount_returns404_withCode() throws Exception {
+        UUID missingAccountId = UUID.randomUUID();
+        UUID operationId = UUID.randomUUID();
+        var body = Map.of(
+                "amount", "10.00",
+                "operationId", operationId.toString()
+        );
+
+        mockMvc.perform(post("/accounts/" + missingAccountId + "/deposit")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(body)))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code").value("ACCOUNT_NOT_FOUND"));
+    }}

@@ -1,4 +1,4 @@
-package com.kata.bankaccount.adapter.web;
+package com.kata.bankaccount.adapter.in.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kata.bankaccount.adapter.in.web.AccountsController;
@@ -6,6 +6,7 @@ import com.kata.bankaccount.application.ports.in.WithdrawUseCase;
 import com.kata.bankaccount.application.ports.in.DepositUseCase;
 import com.kata.bankaccount.application.ports.in.ListTransactionsUseCase;
 import com.kata.bankaccount.domain.exception.InsufficientFundsException;
+import com.kata.bankaccount.domain.exception.AccountNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -70,7 +71,8 @@ class AccountsControllerWithdrawTest {
         mockMvc.perform(post("/accounts/" + accountId + "/withdraw")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(body)))
-                .andExpect(status().isConflict());
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.code").value("INSUFFICIENT_FUNDS"));
     }
 
     @Test
@@ -84,6 +86,27 @@ class AccountsControllerWithdrawTest {
         mockMvc.perform(post("/accounts/" + accountId + "/withdraw")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(body)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("VALIDATION_ERROR"));
+    }
+
+    @Test
+    void withdraw_returns404_withErrorJson_whenAccountNotFound() throws Exception {
+        UUID accountId = UUID.randomUUID();
+        UUID operationId = UUID.randomUUID();
+
+        given(withdrawUseCase.withdraw(eq(accountId), eq(new BigDecimal("10.00")), eq(operationId)))
+                .willThrow(new AccountNotFoundException(accountId, operationId));
+
+        var body = Map.of(
+                "amount", "10.00",
+                "operationId", operationId.toString()
+        );
+
+        mockMvc.perform(post("/accounts/" + accountId + "/withdraw")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(body)))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code").value("ACCOUNT_NOT_FOUND"));
     }
 }

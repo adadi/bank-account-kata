@@ -25,6 +25,7 @@ import java.util.concurrent.Future;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
@@ -128,5 +129,20 @@ class WithdrawIntegrationTest {
                 .andReturn()
                 .getResponse()
                 .getStatus();
+    }
+    @Test
+    void withdraw_nonExistentAccount_returns404_withCode() throws Exception {
+        UUID missingAccountId = UUID.randomUUID();
+        UUID operationId = UUID.randomUUID();
+        var body = Map.of(
+                "amount", "10.00",
+                "operationId", operationId.toString()
+        );
+
+        mockMvc.perform(post("/accounts/" + missingAccountId + "/withdraw")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(body)))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code").value("ACCOUNT_NOT_FOUND"));
     }
 }

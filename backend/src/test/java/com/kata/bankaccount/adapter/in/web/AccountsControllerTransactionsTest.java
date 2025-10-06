@@ -1,4 +1,4 @@
-package com.kata.bankaccount.adapter.web;
+package com.kata.bankaccount.adapter.in.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kata.bankaccount.adapter.in.web.AccountsController;
@@ -6,6 +6,7 @@ import com.kata.bankaccount.application.dto.response.TransactionResponse;
 import com.kata.bankaccount.application.ports.in.ListTransactionsUseCase;
 import com.kata.bankaccount.application.ports.in.DepositUseCase;
 import com.kata.bankaccount.application.ports.in.WithdrawUseCase;
+import com.kata.bankaccount.domain.exception.AccountNotFoundException;
 import com.kata.bankaccount.domain.model.TransactionType;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,5 +76,17 @@ class AccountsControllerTransactionsTest {
                 .andExpect(status().isOk());
 
         verify(listTransactionsUseCase).transactions(eq(accountId), eq(Instant.parse(from)), eq(Instant.parse(to)));
+    }
+
+    @Test
+    void transactions_returns404_whenAccountNotFound() throws Exception {
+        UUID accountId = UUID.randomUUID();
+        given(listTransactionsUseCase.transactions(eq(accountId), any(), any()))
+                .willThrow(new AccountNotFoundException(accountId));
+
+        mockMvc.perform(get("/accounts/" + accountId + "/transactions")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code").value("ACCOUNT_NOT_FOUND"));
     }
 }

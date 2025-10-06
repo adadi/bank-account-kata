@@ -162,22 +162,29 @@ Given/When/Then
 
 ⸻
 
-Epic 9 — Observability & Clean Errors
-
-US10 — Logs, errors, metrics
+US10 — Logs, errors, Swagger
+Goal: provide clear error messages, and automatic API documentation.
 
 Tests to write
 	•	REST API:
-	•	Clear JSON error format (code, message, operationId).
-	•	404 for account not found.
+		•	Clear JSON error format (code, message, operationId).
+		•	404 for account not found.
+		•	Swagger UI available at /swagger-ui.html or /api-docs.
+		•	All endpoints documented (deposit, withdraw, transactions).
 	•	Unit:
-	•	Exception mapping → correct HTTP statuses.
-	•	(Optional) Metrics via Actuator: deposit/withdraw counters.
-
+		•	Exception mapping → correct HTTP statuses.
+		•	Verify OpenAPI configuration loads without errors.
 Given/When/Then
 	•	Given non-existent account
 	•	When I withdraw
 	•	Then 404 JSON {"code":"ACCOUNT_NOT_FOUND"}.
+	Given/When/Then
+	•	Given a non-existent account,
+	•	When I withdraw,
+	•	Then response = 404 JSON {"code":"ACCOUNT_NOT_FOUND"}.
+	•	Given the application runs,
+	•	When I open /swagger-ui.html,
+	•	Then I can browse and test all endpoints with their descriptions.
 
 ⸻
 

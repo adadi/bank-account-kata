@@ -21,6 +21,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
@@ -95,6 +96,16 @@ class TransactionsStatementIntegrationTest {
                 .isAfterOrEqualTo(withdrawalTs);
         assertThat(Instant.parse(arrFiltered.get(1).get("timestamp").asText()))
                 .isAfterOrEqualTo(withdrawalTs);
+    }
+
+    @Test
+    void transactions_nonExistentAccount_returns404_withCode() throws Exception {
+        UUID missingAccountId = UUID.randomUUID();
+
+        mockMvc.perform(get("/accounts/" + missingAccountId + "/transactions")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code").value("ACCOUNT_NOT_FOUND"));
     }
 
     private org.springframework.test.web.servlet.ResultActions callDeposit(UUID accountId, String amount, UUID operationId) throws Exception {

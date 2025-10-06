@@ -72,6 +72,8 @@ public class AccountService implements DepositUseCase, WithdrawUseCase, ListTran
     @Transactional(readOnly = true)
     public List<TransactionResponse> transactions(UUID accountId, Instant from, Instant to) {
         Objects.requireNonNull(accountId, "accountId");
+        // Ensure account exists → 404 when missing
+        accountRepository.lockById(accountId);
         return transactionyRepository.findByAccountAndPeriod(accountId, from, to);
     }
 }

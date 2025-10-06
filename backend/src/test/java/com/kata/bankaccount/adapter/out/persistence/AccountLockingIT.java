@@ -1,4 +1,4 @@
-package com.kata.bankaccount.adapter.persistence;
+package com.kata.bankaccount.adapter.out.persistence;
 
 import com.kata.bankaccount.adapter.out.persistence.jpa.entity.AccountEntity;
 import com.kata.bankaccount.adapter.out.persistence.jpa.repository.AccountJpaRepository;
