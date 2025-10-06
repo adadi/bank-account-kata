@@ -30,6 +30,7 @@ jobs:
 
       - name: Build and run tests
         run: mvn -B -DskipTests=false test
+        working-directory: backend
 
   package:
     name: Package (main)
@@ -48,3 +49,4 @@ jobs:
 
       - name: Build package
         run: mvn -B -DskipTests=true package
+        working-directory: backend
