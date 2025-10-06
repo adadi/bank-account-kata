@@ -1,4 +1,4 @@
-package com.kata.bankaccount.adapter.persistence.jpa.entity;
+package com.kata.bankaccount.adapter.out.persistence.jpa.entity;
 
 import com.kata.bankaccount.domain.model.TransactionType;
 import jakarta.persistence.*;
@@ -21,13 +21,13 @@ public class TransactionEntity {
     @Column(nullable = false)
     private TransactionType type;
 
-    @Column(nullable = false, precision = 19, scale = 2)
+    @Column(nullable = false, precision = 19, scale = 4)
     private BigDecimal amount;
 
     @Column(nullable = false)
     private Instant timestamp;
 
-    @Column(name = "resulting_balance", nullable = false, precision = 19, scale = 2)
+    @Column(name = "resulting_balance", nullable = false, precision = 19, scale = 4)
     private BigDecimal resultingBalance;
 
     public TransactionEntity() {}
@@ -59,4 +59,3 @@ public class TransactionEntity {
     public BigDecimal getResultingBalance() { return resultingBalance; }
     public void setResultingBalance(BigDecimal resultingBalance) { this.resultingBalance = resultingBalance; }
 }
-

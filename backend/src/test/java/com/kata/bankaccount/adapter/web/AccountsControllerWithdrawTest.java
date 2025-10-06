@@ -1,9 +1,9 @@
 package com.kata.bankaccount.adapter.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kata.bankaccount.adapter.in.web.AccountsController;
 import com.kata.bankaccount.application.ports.in.AccountUseCase;
 import com.kata.bankaccount.domain.exception.InsufficientFundsException;
-import com.kata.bankaccount.domain.model.Account;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;

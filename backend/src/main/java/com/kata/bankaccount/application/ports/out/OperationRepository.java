@@ -5,7 +5,7 @@ import java.util.UUID;
 /**
  * Port for idempotency tracking of operations.
  */
-public interface IdempotencyRepository {
+public interface OperationRepository {
     boolean exists(UUID operationId);
     void save(UUID operationId);
 }

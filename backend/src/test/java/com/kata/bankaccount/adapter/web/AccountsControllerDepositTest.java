@@ -1,6 +1,7 @@
 package com.kata.bankaccount.adapter.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kata.bankaccount.adapter.in.web.AccountsController;
 import com.kata.bankaccount.application.dto.response.DepositResponse;
 import com.kata.bankaccount.application.ports.in.AccountUseCase;
 import com.kata.bankaccount.domain.model.Account;

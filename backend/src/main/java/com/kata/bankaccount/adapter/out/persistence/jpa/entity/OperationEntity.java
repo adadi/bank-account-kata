@@ -1,8 +1,6 @@
-package com.kata.bankaccount.adapter.persistence.jpa.entity;
+package com.kata.bankaccount.adapter.out.persistence.jpa.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -12,7 +10,7 @@ import java.util.UUID;
 public class OperationEntity {
     @Id
     private UUID id;
-
+    @Column(name = "created_at", nullable = false)
     private Instant createdAt = Instant.now();
 
     public OperationEntity() {}
@@ -25,4 +23,3 @@ public class OperationEntity {
     public Instant getCreatedAt() { return createdAt; }
     public void setCreatedAt(Instant createdAt) { this.createdAt = createdAt; }
 }
-

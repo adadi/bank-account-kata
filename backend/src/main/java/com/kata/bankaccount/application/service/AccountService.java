@@ -4,7 +4,7 @@ import com.kata.bankaccount.application.dto.response.DepositResponse;
 import com.kata.bankaccount.application.dto.response.WithdrawResponse;
 import com.kata.bankaccount.application.ports.in.AccountUseCase;
 import com.kata.bankaccount.application.ports.out.AccountRepository;
-import com.kata.bankaccount.application.ports.out.IdempotencyRepository;
+import com.kata.bankaccount.application.ports.out.OperationRepository;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -14,11 +14,11 @@ import java.util.UUID;
 @Service
 public class AccountService implements AccountUseCase {
     private final AccountRepository accountRepository;
-    private final IdempotencyRepository idempotencyRepository;
+    private final OperationRepository operationRepository;
 
-    public AccountService(AccountRepository accountRepository, IdempotencyRepository idempotencyRepository) {
+    public AccountService(AccountRepository accountRepository, OperationRepository operationRepository) {
         this.accountRepository = accountRepository;
-        this.idempotencyRepository = idempotencyRepository;
+        this.operationRepository = operationRepository;
     }
 
     @Override
@@ -37,7 +37,7 @@ public class AccountService implements AccountUseCase {
         Objects.requireNonNull(accountId, "accountId");
         Objects.requireNonNull(operationId, "operationId");
 
-        if (idempotencyRepository.exists(operationId)) {
+        if (operationRepository.exists(operationId)) {
             // No-op, return current state (locked for consistency)
             var current = accountRepository.lockById(accountId);
             return new DepositResponse(current.getId(), current.getBalance(), false);
@@ -46,7 +46,7 @@ public class AccountService implements AccountUseCase {
         var account = accountRepository.lockById(accountId);
         account.deposit(amount); // domain validates amount > 0
         accountRepository.save(account);
-        idempotencyRepository.save(operationId);
+        operationRepository.save(operationId);
         return new DepositResponse(account.getId(), account.getBalance(), true);
     }
 }

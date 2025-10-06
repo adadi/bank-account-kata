@@ -1,4 +1,4 @@
-package com.kata.bankaccount.adapter.web;
+package com.kata.bankaccount.adapter.in.web;
 
 import com.kata.bankaccount.domain.exception.InsufficientFundsException;
 import org.springframework.http.HttpStatus;
