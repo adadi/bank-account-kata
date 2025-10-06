@@ -162,9 +162,7 @@ Given/When/Then
 
 ⸻
 
-Epic 9 — Observability & Clean Errors
-
-US10 — Logs, errors, metrics
+US10 — Logs, errors
 
 Tests to write
 	•	REST API:
@@ -172,7 +170,6 @@ Tests to write
 	•	404 for account not found.
 	•	Unit:
 	•	Exception mapping → correct HTTP statuses.
-	•	(Optional) Metrics via Actuator: deposit/withdraw counters.
 
 Given/When/Then
 	•	Given non-existent account

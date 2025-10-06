@@ -3,6 +3,7 @@ package com.kata.bankaccount.adapter.out.persistence;
 import com.kata.bankaccount.adapter.out.persistence.jpa.entity.AccountEntity;
 import com.kata.bankaccount.adapter.out.persistence.jpa.entity.TransactionEntity;
 import com.kata.bankaccount.adapter.out.persistence.jpa.repository.AccountJpaRepository;
+import com.kata.bankaccount.domain.exception.AccountNotFoundException;
 import com.kata.bankaccount.application.ports.out.AccountRepository;
 import com.kata.bankaccount.domain.model.Account;
 import com.kata.bankaccount.domain.model.Transaction;
@@ -26,7 +27,7 @@ public class AccountRepositoryAdapter implements AccountRepository {
     @Override
     public Account lockById(UUID accountId) {
         var entity = accountJpaRepository.lockById(accountId)
-                .orElseThrow(() -> new IllegalArgumentException("Account not found: " + accountId));
+                .orElseThrow(() -> new AccountNotFoundException(accountId));
         // Map to domain. Existing transactions are not copied to domain to keep domain minimal.
         return new Account(entity.getId(), entity.getBalance());
     }
@@ -61,4 +62,3 @@ public class AccountRepositoryAdapter implements AccountRepository {
         accountJpaRepository.save(entity);
     }
 }
-
