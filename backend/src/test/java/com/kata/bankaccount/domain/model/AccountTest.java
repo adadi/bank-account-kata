@@ -1,6 +1,5 @@
 package com.kata.bankaccount.domain.model;
 
-import com.kata.bankaccount.domaine.model.Account;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
