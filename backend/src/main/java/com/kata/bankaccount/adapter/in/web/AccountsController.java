@@ -9,6 +9,14 @@ import com.kata.bankaccount.application.ports.in.DepositUseCase;
 import com.kata.bankaccount.application.ports.in.ListTransactionsUseCase;
 import com.kata.bankaccount.application.ports.in.WithdrawUseCase;
 import jakarta.validation.Valid;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +27,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/accounts")
+@Tag(name = "Accounts", description = "Operations on bank accounts")
 public class AccountsController {
 
     private final DepositUseCase depositUseCase;
@@ -32,9 +41,40 @@ public class AccountsController {
     }
 
     @PostMapping("/{id}/deposit")
+    @Operation(
+            summary = "Deposit money",
+            description = "Deposit a positive amount into the given account"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Deposit applied",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = DepositResponse.class),
+                            examples = @ExampleObject(name = "created",
+                                    value = "{\n  \"accountId\": \"6c0e3b06-8d1e-4b5f-8f9a-8d2d7a1a0c00\",\n  \"balance\": 150.00,\n  \"applied\": true\n}"))) ,
+            @ApiResponse(responseCode = "200", description = "Deposit already applied (idempotent)",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = DepositResponse.class),
+                            examples = @ExampleObject(name = "ok",
+                                    value = "{\n  \"accountId\": \"6c0e3b06-8d1e-4b5f-8f9a-8d2d7a1a0c00\",\n  \"balance\": 150.00,\n  \"applied\": false\n}"))),
+            @ApiResponse(responseCode = "400", description = "Invalid input",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = com.kata.bankaccount.adapter.in.web.dto.ApiErrorResponse.class),
+                            examples = @ExampleObject(value = "{\n  \"code\": \"VALIDATION_ERROR\",\n  \"message\": \"amount must be > 0\"\n}"))) ,
+            @ApiResponse(responseCode = "404", description = "Account not found",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = com.kata.bankaccount.adapter.in.web.dto.ApiErrorResponse.class),
+                            examples = @ExampleObject(value = "{\n  \"code\": \"ACCOUNT_NOT_FOUND\",\n  \"message\": \"Account not found\",\n  \"operationId\": \"11111111-1111-1111-1111-111111111111\"\n}")))
+    })
     public ResponseEntity<DepositResponse> deposit(
-            @PathVariable("id") UUID accountId,
-            @Valid @RequestBody DepositRequest request
+            @Parameter(description = "Account ID") @PathVariable("id") UUID accountId,
+            @Valid @org.springframework.web.bind.annotation.RequestBody
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Deposit request",
+                    required = true,
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = DepositRequest.class),
+                            examples = @ExampleObject(name = "deposit",
+                                    value = "{\n  \"amount\": 50.00,\n  \"operationId\": \"11111111-1111-1111-1111-111111111111\"\n}")))
+            DepositRequest request
     ) {
         DepositResponse response = depositUseCase.deposit(accountId, request.amount(), request.operationId());
         HttpStatus status = response.applied() ? HttpStatus.CREATED : HttpStatus.OK;
@@ -42,18 +82,59 @@ public class AccountsController {
     }
 
     @PostMapping("/{id}/withdraw")
+    @Operation(
+            summary = "Withdraw money",
+            description = "Withdraw a positive amount from the given account"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Withdraw applied",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = WithdrawResponse.class),
+                            examples = @ExampleObject(value = "{\n  \"accountId\": \"6c0e3b06-8d1e-4b5f-8f9a-8d2d7a1a0c00\",\n  \"balance\": 60.00\n}"))),
+            @ApiResponse(responseCode = "409", description = "Insufficient funds",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = com.kata.bankaccount.adapter.in.web.dto.ApiErrorResponse.class),
+                            examples = @ExampleObject(value = "{\n  \"code\": \"INSUFFICIENT_FUNDS\",\n  \"message\": \"Insufficient funds\"\n}"))),
+            @ApiResponse(responseCode = "400", description = "Invalid input",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = com.kata.bankaccount.adapter.in.web.dto.ApiErrorResponse.class),
+                            examples = @ExampleObject(value = "{\n  \"code\": \"VALIDATION_ERROR\",\n  \"message\": \"amount must be > 0\"\n}"))),
+            @ApiResponse(responseCode = "404", description = "Account not found",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = com.kata.bankaccount.adapter.in.web.dto.ApiErrorResponse.class),
+                            examples = @ExampleObject(value = "{\n  \"code\": \"ACCOUNT_NOT_FOUND\",\n  \"message\": \"Account not found\",\n  \"operationId\": \"11111111-1111-1111-1111-111111111111\"\n}")))
+    })
     public ResponseEntity<WithdrawResponse> withdraw(
-            @PathVariable("id") UUID accountId,
-            @Valid @RequestBody WithdrawRequest request
+            @Parameter(description = "Account ID") @PathVariable("id") UUID accountId,
+            @Valid @org.springframework.web.bind.annotation.RequestBody
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Withdraw request",
+                    required = true,
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = WithdrawRequest.class),
+                            examples = @ExampleObject(name = "withdraw",
+                                    value = "{\n  \"amount\": 40.00,\n  \"operationId\": \"11111111-1111-1111-1111-111111111111\"\n}")))
+            WithdrawRequest request
     ) {
         var response = withdrawUseCase.withdraw(accountId, request.amount(), request.operationId());
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{id}/transactions")
+    @Operation(
+            summary = "List transactions",
+            description = "List the account transactions, optionally filtered by time range"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Transactions list",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = TransactionResponse.class),
+                            examples = @ExampleObject(value = "[\n  {\n    \"type\": \"DEPOSIT\",\n    \"amount\": 100.00,\n    \"timestamp\": \"2024-01-01T10:00:00Z\",\n    \"resultingBalance\": 100.00\n  },\n  {\n    \"type\": \"WITHDRAW\",\n    \"amount\": 40.00,\n    \"timestamp\": \"2024-01-02T11:00:00Z\",\n    \"resultingBalance\": 60.00\n  }\n]")))
+    })
     public List<TransactionResponse> transactions(
-            @PathVariable("id") UUID accountId,
+            @Parameter(description = "Account ID") @PathVariable("id") UUID accountId,
+            @Parameter(description = "Start of time range (ISO-8601)")
             @RequestParam(value = "from", required = false) Instant from,
+            @Parameter(description = "End of time range (ISO-8601)")
             @RequestParam(value = "to", required = false) Instant to
     ) {
         return listTransactionsUseCase.transactions(accountId, from, to);
