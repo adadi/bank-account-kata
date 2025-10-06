@@ -112,7 +112,7 @@ Given / When / Then:
 
 ⸻
 
-US7 — Idempotency by operationId
+US7 — Operation(Idempotency) by operationId
 
 Goal: prevent double processing (double-click, network retry).
 
@@ -121,7 +121,7 @@ Tests to write
 	•	Two deposits with same operationId → one transaction only, balance +1 time.
 	•	Two withdrawals with same operationId → one execution only.
 	•	REST API:
-	•	First call → 200/201, second → 200/201 with same result (idempotent), never 500.
+	•	First call → 200/201, second → 200/201 with same result (operation(idempotency)), never 500.
 
 Given/When/Then
 	•	Given operationId=ABC, deposit 50

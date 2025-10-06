@@ -57,4 +57,32 @@ class DepositIntegrationTest {
         assertThat(accountEntity.getTransactions()).hasSize(1);
         assertThat(accountEntity.getTransactions().get(0).getType()).isEqualTo(TransactionType.DEPOSIT);
     }
+
+    @Test
+    void deposit_isIdempotent_forSameOperationId() throws Exception {
+        // Given
+        var operationId = UUID.randomUUID();
+        var body = Map.of(
+                "amount", "50.00",
+                "operationId", operationId.toString()
+        );
+
+        // When - first call applied
+        mockMvc.perform(post("/accounts/" + accountId + "/deposit")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(body)))
+                .andExpect(status().isCreated());
+
+        // When - second call idempotent
+        mockMvc.perform(post("/accounts/" + accountId + "/deposit")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(body)))
+                .andExpect(status().isOk());
+
+        // Then
+        var accountEntity = accountJpaRepository.findByIdWithTransactions(accountId).orElseThrow();
+        assertThat(accountEntity.getBalance()).isEqualByComparingTo("50.00");
+        assertThat(accountEntity.getTransactions()).hasSize(1);
+        assertThat(accountEntity.getTransactions().get(0).getType()).isEqualTo(TransactionType.DEPOSIT);
+    }
 }

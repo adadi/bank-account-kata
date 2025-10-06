@@ -8,9 +8,10 @@ import java.util.UUID;
 
 public interface AccountUseCase {
     /**
-     * Withdraw the given amount from the account.
+     * Withdraw the given amount with an idempotency key.
+     * Subsequent calls with the same operationId must not apply twice.
      */
-    WithdrawResponse withdraw(UUID accountId, BigDecimal amount);
+    WithdrawResponse withdraw(UUID accountId, BigDecimal amount, UUID operationId);
 
     /**
      * Deposit the given amount into the account with an idempotency key.
