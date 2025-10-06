@@ -146,8 +146,6 @@ Given/When/Then
 
 ⸻
 
-Epic 8 — Account statement (read)
-
 US9 — Endpoint GET /accounts/{id}/transactions?from&to
 
 Tests to write
