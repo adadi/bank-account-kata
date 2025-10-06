@@ -37,7 +37,7 @@ public class AccountsController {
             @PathVariable("id") UUID accountId,
             @Valid @RequestBody WithdrawRequest request
     ) {
-        var response = accountUseCase.withdraw(accountId, request.amount());
+        var response = accountUseCase.withdraw(accountId, request.amount(), request.operationId());
         return ResponseEntity.ok(response);
     }
 }

@@ -37,14 +37,21 @@ class WithdrawIntegrationTest {
     }
 
     @Test
-    void withdraw_decreasesBalance_andAddsTransactionRow() throws Exception {
+    void withdraw_isIdempotent_forSameOperationId() throws Exception {
         // Given
+        var operationId = UUID.randomUUID();
         var body = Map.of(
                 "amount", "40.00",
-                "operationId", UUID.randomUUID().toString()
+                "operationId", operationId.toString()
         );
 
-        // When
+        // When - first call applied
+        mockMvc.perform(post("/accounts/" + accountId + "/withdraw")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(body)))
+                .andExpect(status().isOk());
+
+        // When - second call idempotent
         mockMvc.perform(post("/accounts/" + accountId + "/withdraw")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(body)))
@@ -55,25 +62,6 @@ class WithdrawIntegrationTest {
         assertThat(accountEntity.getBalance()).isEqualByComparingTo("60.00");
         assertThat(accountEntity.getTransactions()).hasSize(1);
         assertThat(accountEntity.getTransactions().get(0).getType()).isEqualTo(TransactionType.WITHDRAWAL);
-    }
-
-    @Test
-    void givenBalance100_whenWithdraw120_then409_andBalanceRemains100() throws Exception {
-        // Given
-        var body = Map.of(
-                "amount", "120.00",
-                "operationId", UUID.randomUUID().toString()
-        );
-
-        // When
-        mockMvc.perform(post("/accounts/" + accountId + "/withdraw")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(body)))
-                .andExpect(status().isConflict());
-
-        // Then
-        var accountEntity = accountJpaRepository.findByIdWithTransactions(accountId).orElseThrow();
-        assertThat(accountEntity.getBalance()).isEqualByComparingTo("100.00");
     }
 }
 

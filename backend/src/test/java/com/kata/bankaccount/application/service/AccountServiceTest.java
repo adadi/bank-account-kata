@@ -44,13 +44,15 @@ class AccountServiceTest {
     }
 
     @Test
-    void withdraw_callsLockAndSave_updatesBalance_andCreatesTransaction() {
+    void withdraw_callsLockAndSave_updatesBalance_andCreatesTransaction_andPersistsOperation() {
         // Given
         var account = new Account(accountId, new BigDecimal("100.00"));
         when(accountRepository.lockById(accountId)).thenReturn(account);
+        UUID operationId = UUID.randomUUID();
+        when(operationRepository.exists(operationId)).thenReturn(false);
 
         // When
-        accountService.withdraw(accountId, new BigDecimal("40.00"));
+        accountService.withdraw(accountId, new BigDecimal("40.00"), operationId);
 
         // Then
         verify(accountRepository, times(1)).lockById(accountId);
@@ -61,6 +63,7 @@ class AccountServiceTest {
         assertThat(saved.getTransactions()).hasSize(1);
         assertThat(saved.getTransactions().get(0).getType()).isEqualTo(TransactionType.WITHDRAWAL);
         assertThat(saved.getTransactions().get(0).getAmount()).isEqualByComparingTo("40.00");
+        verify(operationRepository).save(operationId);
     }
 
     @Test
@@ -68,12 +71,32 @@ class AccountServiceTest {
         // Given
         var account = new Account(accountId, new BigDecimal("10.00"));
         when(accountRepository.lockById(accountId)).thenReturn(account);
+        UUID operationId = UUID.randomUUID();
+        when(operationRepository.exists(operationId)).thenReturn(false);
 
         // When / Then
         assertThrows(InsufficientFundsException.class,
-                () -> accountService.withdraw(accountId, new BigDecimal("40.00")));
+                () -> accountService.withdraw(accountId, new BigDecimal("40.00"), operationId));
 
         verify(accountRepository, times(1)).lockById(accountId);
         verify(accountRepository, never()).save(any());
+        verify(operationRepository, never()).save(any());
+    }
+
+    @Test
+    void withdraw_sameOperationId_isIdempotent_noAdditionalSave() {
+        // Given
+        var account = new Account(accountId, new BigDecimal("100.00"));
+        when(accountRepository.lockById(accountId)).thenReturn(account);
+        UUID operationId = UUID.randomUUID();
+        when(operationRepository.exists(operationId)).thenReturn(true);
+
+        // When
+        accountService.withdraw(accountId, new BigDecimal("40.00"), operationId);
+
+        // Then
+        verify(accountRepository, times(1)).lockById(accountId);
+        verify(accountRepository, never()).save(any());
+        verify(operationRepository, never()).save(any());
     }
 }

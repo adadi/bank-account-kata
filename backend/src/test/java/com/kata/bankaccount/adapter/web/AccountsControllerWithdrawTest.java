@@ -34,7 +34,7 @@ class AccountsControllerWithdrawTest {
         UUID accountId = UUID.randomUUID();
         UUID operationId = UUID.randomUUID();
 
-        given(accountUseCase.withdraw(eq(accountId), eq(new BigDecimal("40.00"))))
+        given(accountUseCase.withdraw(eq(accountId), eq(new BigDecimal("40.00")), eq(operationId)))
                 .willReturn(new com.kata.bankaccount.application.dto.response.WithdrawResponse(accountId, new BigDecimal("60.00")));
 
         var body = Map.of(
@@ -55,7 +55,7 @@ class AccountsControllerWithdrawTest {
         UUID accountId = UUID.randomUUID();
         UUID operationId = UUID.randomUUID();
 
-        given(accountUseCase.withdraw(eq(accountId), eq(new BigDecimal("120.00"))))
+        given(accountUseCase.withdraw(eq(accountId), eq(new BigDecimal("120.00")), eq(operationId)))
                 .willThrow(new InsufficientFundsException("Insufficient funds"));
 
         var body = Map.of(
