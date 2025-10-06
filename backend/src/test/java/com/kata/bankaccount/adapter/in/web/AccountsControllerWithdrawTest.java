@@ -1,4 +1,4 @@
-package com.kata.bankaccount.adapter.web;
+package com.kata.bankaccount.adapter.in.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kata.bankaccount.adapter.in.web.AccountsController;

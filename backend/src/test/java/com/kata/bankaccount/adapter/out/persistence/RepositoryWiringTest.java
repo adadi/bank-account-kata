@@ -1,6 +1,5 @@
-package com.kata.bankaccount.adapter.persistence;
+package com.kata.bankaccount.adapter.out.persistence;
 
-import com.kata.bankaccount.adapter.out.persistence.AccountRepositoryAdapter;
 import com.kata.bankaccount.application.ports.out.AccountRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
