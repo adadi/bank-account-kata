@@ -2,6 +2,7 @@ package com.kata.bankaccount.application.service;
 
 import com.kata.bankaccount.application.ports.out.AccountRepository;
 import com.kata.bankaccount.application.ports.out.OperationRepository;
+import com.kata.bankaccount.application.ports.out.TransactionyRepository;
 import com.kata.bankaccount.domain.exception.InsufficientFundsException;
 import com.kata.bankaccount.domain.model.Account;
 import com.kata.bankaccount.domain.model.TransactionType;
@@ -29,6 +30,8 @@ class AccountServiceTest {
 
     @Mock
     OperationRepository operationRepository;
+    @Mock
+    TransactionyRepository transactionyRepository;
 
     @InjectMocks
     AccountService accountService;

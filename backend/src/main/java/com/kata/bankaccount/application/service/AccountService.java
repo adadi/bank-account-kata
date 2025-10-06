@@ -1,25 +1,35 @@
 package com.kata.bankaccount.application.service;
 
 import com.kata.bankaccount.application.dto.response.DepositResponse;
+import com.kata.bankaccount.application.dto.response.TransactionResponse;
 import com.kata.bankaccount.application.dto.response.WithdrawResponse;
-import com.kata.bankaccount.application.ports.in.AccountUseCase;
+import com.kata.bankaccount.application.ports.in.DepositUseCase;
+import com.kata.bankaccount.application.ports.in.ListTransactionsUseCase;
+import com.kata.bankaccount.application.ports.in.WithdrawUseCase;
 import com.kata.bankaccount.application.ports.out.AccountRepository;
 import com.kata.bankaccount.application.ports.out.OperationRepository;
+import com.kata.bankaccount.application.ports.out.TransactionyRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.Instant;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
 @Service
-public class AccountService implements AccountUseCase {
+public class AccountService implements DepositUseCase, WithdrawUseCase, ListTransactionsUseCase {
     private final AccountRepository accountRepository;
     private final OperationRepository operationRepository;
+    private final TransactionyRepository transactionyRepository;
 
-    public AccountService(AccountRepository accountRepository, OperationRepository operationRepository) {
+    public AccountService(AccountRepository accountRepository,
+                          OperationRepository operationRepository,
+                          TransactionyRepository transactionyRepository) {
         this.accountRepository = accountRepository;
         this.operationRepository = operationRepository;
+        this.transactionyRepository = transactionyRepository;
     }
 
     @Override
@@ -56,5 +66,12 @@ public class AccountService implements AccountUseCase {
         accountRepository.save(account);
         operationRepository.save(operationId);
         return new DepositResponse(account.getId(), account.getBalance(), true);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<TransactionResponse> transactions(UUID accountId, Instant from, Instant to) {
+        Objects.requireNonNull(accountId, "accountId");
+        return transactionyRepository.findByAccountAndPeriod(accountId, from, to);
     }
 }

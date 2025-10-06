@@ -3,7 +3,9 @@ package com.kata.bankaccount.adapter.web;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kata.bankaccount.adapter.in.web.AccountsController;
 import com.kata.bankaccount.application.dto.response.DepositResponse;
-import com.kata.bankaccount.application.ports.in.AccountUseCase;
+import com.kata.bankaccount.application.ports.in.DepositUseCase;
+import com.kata.bankaccount.application.ports.in.WithdrawUseCase;
+import com.kata.bankaccount.application.ports.in.ListTransactionsUseCase;
 import com.kata.bankaccount.domain.model.Account;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,14 +31,16 @@ class AccountsControllerDepositTest {
     @Autowired MockMvc mockMvc;
     @Autowired ObjectMapper objectMapper;
 
-    @MockBean AccountUseCase accountUseCase;
+    @MockBean DepositUseCase depositUseCase;
+    @MockBean WithdrawUseCase withdrawUseCase;
+    @MockBean ListTransactionsUseCase listTransactionsUseCase;
 
     @Test
     void deposit_returns201_whenApplied() throws Exception {
         UUID accountId = UUID.randomUUID();
         UUID operationId = UUID.randomUUID();
         Account account = new Account(accountId, new BigDecimal("50"));
-        given(accountUseCase.deposit(eq(accountId), eq(new BigDecimal("50.00")), eq(operationId)))
+        given(depositUseCase.deposit(eq(accountId), eq(new BigDecimal("50.00")), eq(operationId)))
                 .willReturn(new DepositResponse(account.getId(), account.getBalance(), true));
 
         var body = Map.of(
@@ -57,7 +61,7 @@ class AccountsControllerDepositTest {
         UUID accountId = UUID.randomUUID();
         UUID operationId = UUID.randomUUID();
         Account account = new Account(accountId, new BigDecimal("50"));
-        given(accountUseCase.deposit(eq(accountId), eq(new BigDecimal("50.00")), eq(operationId)))
+        given(depositUseCase.deposit(eq(accountId), eq(new BigDecimal("50.00")), eq(operationId)))
                 .willReturn(new DepositResponse(account.getId(), account.getBalance(), false));
 
         var body = Map.of(
@@ -90,7 +94,7 @@ class AccountsControllerDepositTest {
                 "operationId", operationId.toString()
         );
         // stub use case to avoid NullPointer (won't be called due to validation)
-        given(accountUseCase.deposit(eq(accountId), any(), eq(operationId)))
+        given(depositUseCase.deposit(eq(accountId), any(), eq(operationId)))
                 .willReturn(new DepositResponse(accountId, BigDecimal.ZERO, true));
 
         mockMvc.perform(post("/accounts/" + accountId + "/deposit")

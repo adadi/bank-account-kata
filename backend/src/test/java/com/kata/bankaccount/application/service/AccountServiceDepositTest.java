@@ -3,6 +3,7 @@ package com.kata.bankaccount.application.service;
 import com.kata.bankaccount.application.dto.response.DepositResponse;
 import com.kata.bankaccount.application.ports.out.AccountRepository;
 import com.kata.bankaccount.application.ports.out.OperationRepository;
+import com.kata.bankaccount.application.ports.out.TransactionyRepository;
 import com.kata.bankaccount.domain.model.Account;
 import com.kata.bankaccount.domain.model.TransactionType;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,8 +29,11 @@ class AccountServiceDepositTest {
     @Mock AccountRepository accountRepository;
     @Mock
     OperationRepository operationRepository;
+    @Mock
+    TransactionyRepository transactionyRepository;
 
-    @InjectMocks AccountService accountService;
+    @InjectMocks
+    AccountService accountService;
 
     @Captor ArgumentCaptor<Account> accountCaptor;
 
