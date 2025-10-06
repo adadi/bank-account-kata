@@ -1,4 +1,4 @@
-package com.kata.bankaccount.adapter.web;
+package com.kata.bankaccount.adapter.in.web;
 
 import com.kata.bankaccount.application.dto.request.DepositRequest;
 import com.kata.bankaccount.application.dto.request.WithdrawRequest;

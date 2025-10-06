@@ -1,4 +1,4 @@
-package com.kata.bankaccount.adapter.persistence.jpa.entity;
+package com.kata.bankaccount.adapter.out.persistence.jpa.entity;
 
 import jakarta.persistence.*;
 
@@ -14,7 +14,7 @@ public class AccountEntity {
     @Id
     private UUID id;
 
-    @Column(nullable = false, precision = 19, scale = 2)
+    @Column(nullable = false, precision = 19, scale = 4)
     private BigDecimal balance;
 
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
@@ -36,4 +36,3 @@ public class AccountEntity {
     public List<TransactionEntity> getTransactions() { return transactions; }
     public void setTransactions(List<TransactionEntity> transactions) { this.transactions = transactions; }
 }
-

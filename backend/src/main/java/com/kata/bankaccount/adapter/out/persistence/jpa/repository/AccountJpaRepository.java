@@ -1,6 +1,6 @@
-package com.kata.bankaccount.adapter.persistence.jpa.repository;
+package com.kata.bankaccount.adapter.out.persistence.jpa.repository;
 
-import com.kata.bankaccount.adapter.persistence.jpa.entity.AccountEntity;
+import com.kata.bankaccount.adapter.out.persistence.jpa.entity.AccountEntity;
 import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;

@@ -92,7 +92,25 @@ Given/When/Then
 
 ⸻
 
-Epic 7 — Idempotency & Concurrency
+US6 — Liquibase migrations + Postgres SQL
+
+Goal: connect the PostgreSQL database after validating the domain.
+
+Tables: accounts, transactions.
+
+Tests to write (integration via PostgreSQL Testcontainers or H2)
+	•	Tables exist.
+	•	UNIQUE constraint on transactions.operation_id.
+	•	Correct column types (NUMERIC(19,4)).
+	•	JPA adapter implements the AccountRepository port.
+	•	Method findByIdForUpdate() applies SELECT … FOR UPDATE.
+
+Given / When / Then:
+	•	Given the app starts,
+	•	When Liquibase runs,
+	•	Then tables and constraints exist.
+
+⸻
 
 US7 — Idempotency by operationId
 

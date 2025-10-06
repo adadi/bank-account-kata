@@ -1,0 +1,89 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-accounts-transactions-operations
+      author: Soufiane
+      changes:
+        - createTable:
+            tableName: accounts
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: balance
+                  type: numeric(19,4)
+                  constraints:
+                    nullable: false
+        - createTable:
+            tableName: transactions
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: account_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+                    referencedTableName: accounts
+                    referencedColumnNames: id
+                    foreignKeyName: fk_transactions_account
+              - column:
+                  name: type
+                  type: varchar(32)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: amount
+                  type: numeric(19,4)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: timestamp
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: resulting_balance
+                  type: numeric(19,4)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: operation_id
+                  type: uuid
+                  constraints:
+                    nullable: true
+        - addUniqueConstraint:
+            tableName: transactions
+            columnNames: operation_id
+            constraintName: uk_transactions_operation_id
+            deferrable: false
+            initiallyDeferred: false
+            disabled: false
+        - createIndex:
+            tableName: transactions
+            indexName: idx_transactions_account_id
+            columns:
+              - column:
+                  name: account_id
+        - createTable:
+            tableName: operations
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+

@@ -1,8 +1,8 @@
-package com.kata.bankaccount.adapter.persistence;
+package com.kata.bankaccount.adapter.out.persistence;
 
-import com.kata.bankaccount.adapter.persistence.jpa.entity.OperationEntity;
-import com.kata.bankaccount.adapter.persistence.jpa.repository.OperationJpaRepository;
-import com.kata.bankaccount.application.ports.out.IdempotencyRepository;
+import com.kata.bankaccount.adapter.out.persistence.jpa.entity.OperationEntity;
+import com.kata.bankaccount.adapter.out.persistence.jpa.repository.OperationJpaRepository;
+import com.kata.bankaccount.application.ports.out.OperationRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -10,10 +10,10 @@ import java.util.UUID;
 
 @Repository
 @Transactional
-public class JpaIdempotencyRepositoryAdapter implements IdempotencyRepository {
+public class OperationRepositoryAdapter implements OperationRepository {
     private final OperationJpaRepository repo;
 
-    public JpaIdempotencyRepositoryAdapter(OperationJpaRepository repo) {
+    public OperationRepositoryAdapter(OperationJpaRepository repo) {
         this.repo = repo;
     }
 

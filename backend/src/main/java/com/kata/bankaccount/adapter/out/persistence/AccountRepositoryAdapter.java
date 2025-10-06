@@ -1,8 +1,8 @@
-package com.kata.bankaccount.adapter.persistence;
+package com.kata.bankaccount.adapter.out.persistence;
 
-import com.kata.bankaccount.adapter.persistence.jpa.entity.AccountEntity;
-import com.kata.bankaccount.adapter.persistence.jpa.entity.TransactionEntity;
-import com.kata.bankaccount.adapter.persistence.jpa.repository.AccountJpaRepository;
+import com.kata.bankaccount.adapter.out.persistence.jpa.entity.AccountEntity;
+import com.kata.bankaccount.adapter.out.persistence.jpa.entity.TransactionEntity;
+import com.kata.bankaccount.adapter.out.persistence.jpa.repository.AccountJpaRepository;
 import com.kata.bankaccount.application.ports.out.AccountRepository;
 import com.kata.bankaccount.domain.model.Account;
 import com.kata.bankaccount.domain.model.Transaction;
@@ -15,11 +15,11 @@ import java.util.UUID;
 
 @Repository
 @Transactional
-public class JpaAccountRepositoryAdapter implements AccountRepository {
+public class AccountRepositoryAdapter implements AccountRepository {
 
     private final AccountJpaRepository accountJpaRepository;
 
-    public JpaAccountRepositoryAdapter(AccountJpaRepository accountJpaRepository) {
+    public AccountRepositoryAdapter(AccountJpaRepository accountJpaRepository) {
         this.accountJpaRepository = accountJpaRepository;
     }
 

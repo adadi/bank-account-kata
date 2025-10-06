@@ -2,7 +2,7 @@ package com.kata.bankaccount.application.service;
 
 import com.kata.bankaccount.application.dto.response.DepositResponse;
 import com.kata.bankaccount.application.ports.out.AccountRepository;
-import com.kata.bankaccount.application.ports.out.IdempotencyRepository;
+import com.kata.bankaccount.application.ports.out.OperationRepository;
 import com.kata.bankaccount.domain.model.Account;
 import com.kata.bankaccount.domain.model.TransactionType;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,7 +26,8 @@ import static org.mockito.Mockito.*;
 class AccountServiceDepositTest {
 
     @Mock AccountRepository accountRepository;
-    @Mock IdempotencyRepository idempotencyRepository;
+    @Mock
+    OperationRepository operationRepository;
 
     @InjectMocks AccountService accountService;
 
@@ -46,7 +47,7 @@ class AccountServiceDepositTest {
         // Given
         var account = new Account(accountId, new BigDecimal("0"));
         when(accountRepository.lockById(accountId)).thenReturn(account);
-        when(idempotencyRepository.exists(operationId)).thenReturn(false);
+        when(operationRepository.exists(operationId)).thenReturn(false);
 
         // When
         DepositResponse result = accountService.deposit(accountId, new BigDecimal("50"), operationId);
@@ -62,7 +63,7 @@ class AccountServiceDepositTest {
         // Given
         var account = new Account(accountId, new BigDecimal("0"));
         when(accountRepository.lockById(accountId)).thenReturn(account);
-        when(idempotencyRepository.exists(operationId)).thenReturn(false);
+        when(operationRepository.exists(operationId)).thenReturn(false);
 
         // When
         accountService.deposit(accountId, new BigDecimal("50.00"), operationId);
@@ -74,7 +75,7 @@ class AccountServiceDepositTest {
         assertThat(saved.getTransactions()).hasSize(1);
         assertThat(saved.getTransactions().get(0).getType()).isEqualTo(TransactionType.DEPOSIT);
         assertThat(saved.getTransactions().get(0).getAmount()).isEqualByComparingTo("50.00");
-        verify(idempotencyRepository).save(operationId);
+        verify(operationRepository).save(operationId);
     }
 
     @Test
@@ -82,20 +83,20 @@ class AccountServiceDepositTest {
         // Given
         var account = new Account(accountId, new BigDecimal("0"));
         when(accountRepository.lockById(accountId)).thenReturn(account);
-        when(idempotencyRepository.exists(operationId)).thenReturn(false);
+        when(operationRepository.exists(operationId)).thenReturn(false);
 
         // When / Then
         assertThrows(IllegalArgumentException.class,
                 () -> accountService.deposit(accountId, new BigDecimal("0"), operationId));
 
         verify(accountRepository, never()).save(any());
-        verify(idempotencyRepository, never()).save(any());
+        verify(operationRepository, never()).save(any());
     }
 
     @Test
     void deposit_sameOperationId_isIdempotent_noAdditionalSave_andReturnsAppliedFalse() {
         // Given
-        when(idempotencyRepository.exists(operationId)).thenReturn(true);
+        when(operationRepository.exists(operationId)).thenReturn(true);
         var account = new Account(accountId, new BigDecimal("10"));
         when(accountRepository.lockById(accountId)).thenReturn(account);
 
@@ -106,6 +107,6 @@ class AccountServiceDepositTest {
         assertEquals(new BigDecimal("10"), result.balance());
         assertThat(result.applied()).isFalse();
         verify(accountRepository, never()).save(any());
-        verify(idempotencyRepository, never()).save(any());
+        verify(operationRepository, never()).save(any());
     }
 }

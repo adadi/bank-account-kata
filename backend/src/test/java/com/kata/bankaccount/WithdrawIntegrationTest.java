@@ -1,8 +1,8 @@
 package com.kata.bankaccount;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kata.bankaccount.adapter.persistence.jpa.entity.AccountEntity;
-import com.kata.bankaccount.adapter.persistence.jpa.repository.AccountJpaRepository;
+import com.kata.bankaccount.adapter.out.persistence.jpa.entity.AccountEntity;
+import com.kata.bankaccount.adapter.out.persistence.jpa.repository.AccountJpaRepository;
 import com.kata.bankaccount.domain.model.TransactionType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

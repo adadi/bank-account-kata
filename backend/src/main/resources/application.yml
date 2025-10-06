@@ -8,11 +8,13 @@ spring:
     password: ""
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: none
     show-sql: true
     properties:
       hibernate:
         format_sql: true
+  liquibase:
+    change-log: classpath:/db/changelog/db.changelog-master.yaml
   h2:
     console:
       enabled: true
