@@ -1,10 +1,10 @@
 package com.kata.bankaccount.application.service;
 
-import com.kata.bankaccount.application.ports.in.AccountUseCase;
 import com.kata.bankaccount.application.dto.response.DepositResponse;
+import com.kata.bankaccount.application.dto.response.WithdrawResponse;
+import com.kata.bankaccount.application.ports.in.AccountUseCase;
 import com.kata.bankaccount.application.ports.out.AccountRepository;
 import com.kata.bankaccount.application.ports.out.IdempotencyRepository;
-import com.kata.bankaccount.domain.model.Account;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -22,11 +22,14 @@ public class AccountService implements AccountUseCase {
     }
 
     @Override
-    public Account withdraw(UUID accountId, BigDecimal amount) {
+    public WithdrawResponse withdraw(UUID accountId, BigDecimal amount) {
+        Objects.requireNonNull(accountId, "accountId");
+        Objects.requireNonNull(amount, "amount");
+
         var account = accountRepository.lockById(accountId);
         account.withdraw(amount);
         accountRepository.save(account);
-        return account;
+        return new WithdrawResponse(account.getId(), account.getBalance());
     }
 
     @Override

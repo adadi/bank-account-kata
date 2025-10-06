@@ -71,9 +71,7 @@ Given/When/Then
 
 ⸻
 
-Epic 6 — Withdrawal (use case)
-
-US6 — Endpoint POST /accounts/{id}/withdraw
+US5 — Endpoint POST /accounts/{id}/withdraw
 
 Body: { amount, operationId }.
 
