@@ -33,9 +33,8 @@ Given/When/Then
 
 ⸻
 
-Epic 4 — Ports & Adapters (Hexagonal)
 
-US4 — AccountRepository port + domain service
+US3 — AccountRepository port + domain service
 
 Goal: separate domain and infrastructure.
 
