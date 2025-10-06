@@ -14,6 +14,9 @@ public class Account {
     private BigDecimal balance;
     private final List<Transaction> transactions;
 
+    public Account(){
+        this(UUID.randomUUID(), BigDecimal.ZERO);
+    }
     public Account(UUID id, BigDecimal balance) {
         this.id = Objects.requireNonNull(id, "id");
         this.balance = Objects.requireNonNull(balance, "balance");
