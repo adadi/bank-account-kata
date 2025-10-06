@@ -51,6 +51,15 @@ class AccountTest {
     }
 
     @Test
+    @DisplayName("withdraw(0) → IllegalArgumentException")
+    void withdrawNonPositiveAmountThrows() {
+        Account account = new Account();
+
+        assertThatThrownBy(() -> account.withdraw(new BigDecimal("0")))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
     @DisplayName("Precision: deposit(0.10) ten times → balance = 1.00")
     void depositOneTenthTenTimesEqualsOne() {
         Account account = new Account();
@@ -76,4 +85,3 @@ class AccountTest {
         assertThat(account.getBalance()).isEqualByComparingTo("70");
     }
 }
-

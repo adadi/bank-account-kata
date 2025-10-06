@@ -32,11 +32,10 @@ public class RestExceptionHandler {
 
     @ExceptionHandler(InsufficientFundsException.class)
     public ResponseEntity<Map<String, Object>> handleInsufficient(InsufficientFundsException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(Map.of(
                         "error", "Insufficient funds",
                         "message", ex.getMessage()
                 ));
     }
 }
-

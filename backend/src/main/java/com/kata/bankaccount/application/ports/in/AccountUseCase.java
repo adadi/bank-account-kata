@@ -1,7 +1,7 @@
 package com.kata.bankaccount.application.ports.in;
 
 import com.kata.bankaccount.application.dto.response.DepositResponse;
-import com.kata.bankaccount.domain.model.Account;
+import com.kata.bankaccount.application.dto.response.WithdrawResponse;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -10,7 +10,7 @@ public interface AccountUseCase {
     /**
      * Withdraw the given amount from the account.
      */
-    Account withdraw(UUID accountId, BigDecimal amount);
+    WithdrawResponse withdraw(UUID accountId, BigDecimal amount);
 
     /**
      * Deposit the given amount into the account with an idempotency key.
