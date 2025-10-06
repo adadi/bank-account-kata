@@ -15,28 +15,7 @@ Given/When/Then
 
 ⸻
 
-Epic 2 — Database (Liquibase)
-
-US2 — Migrations create schema
-
-Tables: accounts, transactions.
-
-Tests to write
-	•	Integration (with PostgreSQL Testcontainers or H2):
-	•	Tables exist.
-	•	UNIQUE constraint on transactions.operation_id.
-	•	Correct column types (NUMERIC(19,4)).
-
-Given/When/Then
-	•	Given the app starts
-	•	When Liquibase runs
-	•	Then I see the tables and the UNIQUE constraint on operation_id.
-
-⸻
-
-Epic 3 — Domain (DDD)
-
-US3 — Account model
+US2 — Account model
 
 Rules: deposit > 0, withdrawal > 0 and ≤ balance.
 
