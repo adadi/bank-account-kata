@@ -51,9 +51,7 @@ Given/When/Then
 
 ⸻
 
-Epic 5 — Deposit (use case)
-
-US5 — Endpoint POST /accounts/{id}/deposit
+US4 — Endpoint POST /accounts/{id}/deposit
 
 Body: { amount, operationId }.
 

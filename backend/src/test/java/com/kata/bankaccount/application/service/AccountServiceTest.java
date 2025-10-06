@@ -1,6 +1,7 @@
 package com.kata.bankaccount.application.service;
 
 import com.kata.bankaccount.application.ports.out.AccountRepository;
+import com.kata.bankaccount.application.ports.out.IdempotencyRepository;
 import com.kata.bankaccount.domain.exception.InsufficientFundsException;
 import com.kata.bankaccount.domain.model.Account;
 import com.kata.bankaccount.domain.model.TransactionType;
@@ -25,6 +26,9 @@ class AccountServiceTest {
 
     @Mock
     AccountRepository accountRepository;
+
+    @Mock
+    IdempotencyRepository idempotencyRepository;
 
     @InjectMocks
     AccountService accountService;
@@ -73,4 +77,3 @@ class AccountServiceTest {
         verify(accountRepository, never()).save(any());
     }
 }
-

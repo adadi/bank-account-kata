@@ -1,0 +1,64 @@
+package com.kata.bankaccount.adapter.persistence;
+
+import com.kata.bankaccount.adapter.persistence.jpa.entity.AccountEntity;
+import com.kata.bankaccount.adapter.persistence.jpa.entity.TransactionEntity;
+import com.kata.bankaccount.adapter.persistence.jpa.repository.AccountJpaRepository;
+import com.kata.bankaccount.application.ports.out.AccountRepository;
+import com.kata.bankaccount.domain.model.Account;
+import com.kata.bankaccount.domain.model.Transaction;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
+
+@Repository
+@Transactional
+public class JpaAccountRepositoryAdapter implements AccountRepository {
+
+    private final AccountJpaRepository accountJpaRepository;
+
+    public JpaAccountRepositoryAdapter(AccountJpaRepository accountJpaRepository) {
+        this.accountJpaRepository = accountJpaRepository;
+    }
+
+    @Override
+    public Account lockById(UUID accountId) {
+        var entity = accountJpaRepository.lockById(accountId)
+                .orElseThrow(() -> new IllegalArgumentException("Account not found: " + accountId));
+        // Map to domain. Existing transactions are not copied to domain to keep domain minimal.
+        return new Account(entity.getId(), entity.getBalance());
+    }
+
+    @Override
+    public void save(Account account) {
+        var entity = accountJpaRepository.findByIdWithTransactions(account.getId())
+                .orElse(new AccountEntity(account.getId(), account.getBalance()));
+
+        entity.setBalance(account.getBalance());
+
+        // Append only new transactions by ID
+        Set<UUID> existingIds = new HashSet<>();
+        if (entity.getTransactions() != null) {
+            for (var te : entity.getTransactions()) existingIds.add(te.getId());
+        }
+
+        for (Transaction t : account.getTransactions()) {
+            if (!existingIds.contains(t.getId())) {
+                var te = new TransactionEntity(
+                        t.getId(),
+                        entity,
+                        t.getType(),
+                        t.getAmount(),
+                        t.getTimestamp(),
+                        t.getResultingBalance()
+                );
+                entity.getTransactions().add(te);
+            }
+        }
+
+        accountJpaRepository.save(entity);
+    }
+}
+
