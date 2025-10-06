@@ -1,0 +1,202 @@
+Epic 1 — Project Bootstrap
+
+US1 — Spring Boot project ready
+
+Goal: project compiles and starts.
+
+Tests to write
+	•	API: GET /actuator/health → 200 OK.
+	•	Integration: Spring context loads without errors.
+
+Given/When/Then
+	•	Given the application starts
+	•	When I call /actuator/health
+	•	Then I get status: UP.
+
+⸻
+
+Epic 2 — Database (Liquibase)
+
+US2 — Migrations create schema
+
+Tables: accounts, transactions.
+
+Tests to write
+	•	Integration (with PostgreSQL Testcontainers or H2):
+	•	Tables exist.
+	•	UNIQUE constraint on transactions.operation_id.
+	•	Correct column types (NUMERIC(19,4)).
+
+Given/When/Then
+	•	Given the app starts
+	•	When Liquibase runs
+	•	Then I see the tables and the UNIQUE constraint on operation_id.
+
+⸻
+
+Epic 3 — Domain (DDD)
+
+US3 — Account model
+
+Rules: deposit > 0, withdrawal > 0 and ≤ balance.
+
+Tests to write (unit)
+	•	deposit(100) → balance = 100.
+	•	deposit(-1) → IllegalArgumentException.
+	•	withdraw(30) after deposit(100) → balance = 70.
+	•	withdraw(200) with balance 100 → IllegalStateException.
+	•	Precision: deposit(0.10) ten times → balance = 1.00.
+
+Given/When/Then
+	•	Given balance = 100
+	•	When I withdraw 30
+	•	Then balance = 70.
+
+⸻
+
+Epic 4 — Ports & Adapters (Hexagonal)
+
+US4 — AccountRepository port + domain service
+
+Goal: separate domain and infrastructure.
+
+Tests to write
+	•	Unit tests (with mocks) for AccountService:
+	•	Calls repository.lockById(id) (pessimistic lock) on withdrawal.
+	•	Saves transaction and updates balance.
+	•	Propagates domain exceptions.
+
+Given/When/Then
+	•	Given an account with balance 100
+	•	When withdraw(40)
+	•	Then service calls repo, balance becomes 60, transaction created.
+
+⸻
+
+Epic 5 — Deposit (use case)
+
+US5 — Endpoint POST /accounts/{id}/deposit
+
+Body: { amount, operationId }.
+
+Tests to write
+	•	Unit: validate amount > 0, idempotency (see US8).
+	•	REST API (MockMvc):
+	•	201/200 for valid deposit.
+	•	400 if amount <= 0 or missing.
+	•	Integration (DB):
+	•	After call, balance increases.
+	•	One transactions row added.
+
+Given/When/Then
+	•	Given account balance = 0
+	•	When I deposit 50
+	•	Then balance = 50 and transaction type = “deposit”.
+
+⸻
+
+Epic 6 — Withdrawal (use case)
+
+US6 — Endpoint POST /accounts/{id}/withdraw
+
+Body: { amount, operationId }.
+
+Tests to write
+	•	Unit: amount > 0; if balance < amount → business exception.
+	•	REST API:
+	•	200 if OK.
+	•	409 if insufficient funds.
+	•	400 if invalid amount.
+	•	Integration (DB + lock):
+	•	Correct balance update.
+	•	Transaction “withdrawal” added.
+
+Given/When/Then
+	•	Given balance = 100
+	•	When I withdraw 120
+	•	Then response = 409 and balance remains 100.
+
+⸻
+
+Epic 7 — Idempotency & Concurrency
+
+US7 — Idempotency by operationId
+
+Goal: prevent double processing (double-click, network retry).
+
+Tests to write
+	•	Integration (DB):
+	•	Two deposits with same operationId → one transaction only, balance +1 time.
+	•	Two withdrawals with same operationId → one execution only.
+	•	REST API:
+	•	First call → 200/201, second → 200/201 with same result (idempotent), never 500.
+
+Given/When/Then
+	•	Given operationId=ABC, deposit 50
+	•	When I send the same deposit again
+	•	Then total balance +50, not +100.
+
+⸻
+
+US8 — Prevent concurrent withdrawals
+
+Goal: no double concurrent withdrawals.
+
+Tests to write
+	•	Concurrent integration (2 threads):
+	•	Balance 100, two withdrawals of 80 at the same time → final result: balance = 20 + 1 success, 1 failure (409).
+	•	Verify repo uses SELECT … FOR UPDATE (or optimistic versioning + retry).
+
+Given/When/Then
+	•	Given balance = 100
+	•	When two concurrent withdrawals of 80
+	•	Then only one succeeds, the other fails.
+
+⸻
+
+Epic 8 — Account statement (read)
+
+US9 — Endpoint GET /accounts/{id}/transactions?from&to
+
+Tests to write
+	•	REST API:
+	•	Returns list sorted by date desc.
+	•	Filters by period (from, to).
+	•	Integration (DB):
+	•	After several operations, statement contains correct rows (types, amounts, post-operation balances).
+
+Given/When/Then
+	•	Given 3 operations (Deposit 100, Withdraw 30, Deposit 10)
+	•	When I request the statement
+	•	Then I get these 3 rows in order with correct post-balances.
+
+⸻
+
+Epic 9 — Observability & Clean Errors
+
+US10 — Logs, errors, metrics
+
+Tests to write
+	•	REST API:
+	•	Clear JSON error format (code, message, operationId).
+	•	404 for account not found.
+	•	Unit:
+	•	Exception mapping → correct HTTP statuses.
+	•	(Optional) Metrics via Actuator: deposit/withdraw counters.
+
+Given/When/Then
+	•	Given non-existent account
+	•	When I withdraw
+	•	Then 404 JSON {"code":"ACCOUNT_NOT_FOUND"}.
+
+⸻
+
+Epic 10 — Delivery
+
+US11 — Docker & Compose
+
+Tests to write
+	•	Light e2e script:
+	•	Run docker compose up (app + PostgreSQL).
+	•	Call /deposit, /withdraw, /transactions → all OK.
+	•	Healthchecks OK.
