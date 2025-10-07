@@ -309,3 +309,19 @@ Rules / Validation
 Errors
 	•	400: show backend error message (“Invalid range”).
 	•	404: “Account not found.”
+
+
+US17 — Add Vue 3 Frontend to Docker
+
+Goal: run the frontend with Docker Compose (port 5173).
+
+To Do
+	•	Create a Dockerfile (build with Node → serve with Nginx).
+	•	Add a web service in docker-compose.yml (expose port 5173).
+	•	Add a simple Nginx config (SPA fallback for client-side routing).
+	•	Update the README with simple build/run instructions (2 lines).
+
+Acceptance Criteria
+	•	docker compose up starts without errors.
+	•	Frontend accessible at http://localhost:5173.
+	•	Refreshing any SPA route works correctly (Nginx fallback verified).
