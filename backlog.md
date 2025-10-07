@@ -1,4 +1,3 @@
-Epic 1 — Project Bootstrap
 
 US1 — Spring Boot project ready
 
@@ -187,8 +186,6 @@ Given/When/Then
 	•	Then I can browse and test all endpoints with their descriptions.
 
 ⸻
-
-Epic 10 — Delivery
 
 US11 — Docker & Compose
 
