@@ -67,3 +67,21 @@ Example calls (use the default account):
 - If a port is in use, edit `docker-compose.yml` and change `8080:8080` or `5432:5432`or `80:80`.
 - If you use `docker-compose` (with a dash), replace `docker compose` with `docker-compose` in commands (and in `e2e.sh` if needed).
 
+**KATA**
+Bank account kata
+Think of your personal bank account experience
+When in doubt, go for the simplest solution
+Requirements
+• Deposit and Withdrawal
+• Account statement (date, amount, balance)
+• Statement printing
+User Stories
+US 1:
+In order to save money
+As a bank client
+I want to make a deposit in my account
+US 2:
+In order to retrieve some or all of my savings
+As a bank client
+I want to make a withdrawal from my account
+
