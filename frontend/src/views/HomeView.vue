@@ -13,7 +13,7 @@
       <p><strong>ID:</strong> {{ settings.accountId }}</p>
       <p v-if="account.loading">Loading balance…</p>
       <p v-else-if="account.error" class="error">{{ account.error }}</p>
-      <p v-else><strong>Balance:</strong> {{ account.balance }}</p>
+      <p v-else><strong>Balance:</strong> {{ account.balance }} EUR</p>
       <button @click="refresh" :disabled="account.loading">Refresh</button>
     </div>
   </section>

@@ -27,7 +27,7 @@ function clear() {
 
 <template>
   <span v-if="show" class="badge info">
-    {{ text }}<template v-if="balanceText"> — {{ balanceText }}</template>
+    {{ text }}<template v-if="balanceText"> — {{ balanceText }} EUR</template>
     <button class="link" type="button" @click="clear" title="Logout / Clear ID">Logout</button>
   </span>
 </template>
