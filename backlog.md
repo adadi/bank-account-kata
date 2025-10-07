@@ -211,39 +211,48 @@ Rules / Validation:
 Errors:
 	•	If health ≠ UP, display banner “API unavailable”.
 
-Given / When / Then
-	•	Given the app starts,
-	•	When I open /,
-	•	Then I see “Bank Account Kata” and the API status.
+⸻
 
-Sub-tasks
-	•	Create project: npm create vite@latest → choose Vue + TypeScript.
-	•	Install dependencies: vue-router, pinia, axios.
-	•	Add routes: /, /settings, /deposit, /withdraw, /transactions.
-	•	Create src/services/http.ts (axios baseURL + JSON headers).
-	•	Add HealthBadge component (calls /actuator/health).
+US13 — Account Page (Settings)
 
-Definition of Done (DoD):
-	•	npm run dev, npm run build, npm run lint, npm run test all succeed.
-	•	API health status displayed on the homepage.
+Context: allow the user to enter their accountId.
+Goal: store this information and reuse it for all API calls.
 
-**US13 — Page Compte (Settings)**
+API: — /accounts/${ACCOUNT_ID}
 
-Contexte : saisir accountId.
-Objectif : stocker ces infos et les utiliser dans chaque appel.
+UI/UX:
+	•	Page /settings with one field: Account ID (UUID).
 
-API : —
-UI/UX : page /settings avec un champs : Account ID (UUID).
+Rules / Validation:
+	•	accountId must be a valid UUID (simple regex).
+	•	Save it in Pinia and persist to localStorage (using a persistence plugin).
 
-Règles/Validation
-	•	accountId : UUID valide (regex simple).
-	•	Sauvegarde dans Pinia + localStorage (plugin de persistance).
+Errors:
+	•	Display message: “Invalid UUID.”
 
-Erreurs : message “UUID invalide”.
+⸻
 
-G/W/T
-	•	Given je saisis un UUID
-	•	When je clique “Enregistrer”
-	•	Then je vois un badge avec l’ID dans le header.
+US14 — Deposit Form
 
-DoD : rechargement page → valeurs toujours présentes.
+Context: related to the “deposit” use case.
+Goal: send an idempotent deposit request.
+
+API: POST /accounts/{id}/deposit
+Body: { amount, operationId }
+
+UI/UX
+	•	Page: /deposit.
+	•	Field: amount (> 0).
+	•	Button: Deposit.
+	•	operationId generated client-side (UUID v4).
+	•	Display returned balance and message:
+	•	201 → “Deposit applied”
+	•	200 → “Already applied”
+
+Rules / Validation
+	•	amount > 0
+	•	Up to 2 decimal places
+
+Errors
+	•	400: “Invalid amount”
+	•	404: “Account not found”
