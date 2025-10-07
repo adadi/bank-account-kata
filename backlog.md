@@ -161,7 +161,7 @@ Given/When/Then
 
 ⸻
 
-US10 — Logs, errors, Swagger
+**US10 — Logs, errors, Swagger**
 Goal: provide clear error messages, and automatic API documentation.
 
 Tests to write
@@ -187,10 +187,42 @@ Given/When/Then
 
 ⸻
 
-US11 — Docker & Compose
+**US11 — Docker & Compose**
 
 Tests to write
 	•	Light e2e script:
 	•	Run docker compose up (app + PostgreSQL).
 	•	Call /deposit, /withdraw, /transactions → all OK.
 	•	Healthchecks OK.
+
+⸻
+
+**US12  —  Start Vue 3 Project**
+
+Context: create the foundation of the frontend.
+Goal: Vue 3 app ready with routing and global state management.
+
+API: ping GET /actuator/health.
+UI/UX: homepage titled “Bank Account Kata”.
+
+Rules / Validation:
+	•	Environment variable VITE_API_BASE_URL must be defined.
+
+Errors:
+	•	If health ≠ UP, display banner “API unavailable”.
+
+Given / When / Then
+	•	Given the app starts,
+	•	When I open /,
+	•	Then I see “Bank Account Kata” and the API status.
+
+Sub-tasks
+	•	Create project: npm create vite@latest → choose Vue + TypeScript.
+	•	Install dependencies: vue-router, pinia, axios.
+	•	Add routes: /, /settings, /deposit, /withdraw, /transactions.
+	•	Create src/services/http.ts (axios baseURL + JSON headers).
+	•	Add HealthBadge component (calls /actuator/health).
+
+Definition of Done (DoD):
+	•	npm run dev, npm run build, npm run lint, npm run test all succeed.
+	•	API health status displayed on the homepage.
