@@ -69,7 +69,7 @@ public class AccountService implements DepositUseCase, WithdrawUseCase, ListTran
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public List<TransactionResponse> transactions(UUID accountId, Instant from, Instant to) {
         Objects.requireNonNull(accountId, "accountId");
         // Ensure account exists → 404 when missing

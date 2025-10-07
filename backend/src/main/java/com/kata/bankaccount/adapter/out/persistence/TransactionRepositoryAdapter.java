@@ -22,7 +22,15 @@ public class TransactionRepositoryAdapter implements TransactionyRepository {
 
     @Override
     public List<TransactionResponse> findByAccountAndPeriod(UUID accountId, Instant from, Instant to) {
-        return jpaRepository.findByAccountAndPeriodOrderByTimestampDesc(accountId, from, to)
+        var entities = (from == null && to == null)
+                ? jpaRepository.findByAccount_IdOrderByTimestampDesc(accountId)
+                : (from == null)
+                    ? jpaRepository.findByAccount_IdAndTimestampLessThanEqualOrderByTimestampDesc(accountId, to)
+                    : (to == null)
+                        ? jpaRepository.findByAccount_IdAndTimestampGreaterThanEqualOrderByTimestampDesc(accountId, from)
+                        : jpaRepository.findByAccount_IdAndTimestampBetweenOrderByTimestampDesc(accountId, from, to);
+
+        return entities
                 .stream()
                 .map(e -> new TransactionResponse(
                         e.getType(),
@@ -33,4 +41,3 @@ public class TransactionRepositoryAdapter implements TransactionyRepository {
                 .toList();
     }
 }
-

@@ -11,14 +11,12 @@ import java.util.UUID;
 
 public interface TransactionJpaRepository extends JpaRepository<TransactionEntity, UUID> {
 
-    @Query("select t from TransactionEntity t " +
-            "where t.account.id = :accountId " +
-            "and (:from is null or t.timestamp >= :from) " +
-            "and (:to is null or t.timestamp <= :to) " +
-            "order by t.timestamp desc")
-    List<TransactionEntity> findByAccountAndPeriodOrderByTimestampDesc(
-            @Param("accountId") UUID accountId,
-            @Param("from") Instant from,
-            @Param("to") Instant to);
-}
+    // Derived queries to avoid null-parameter type inference issues on PostgreSQL
+    List<TransactionEntity> findByAccount_IdOrderByTimestampDesc(UUID accountId);
 
+    List<TransactionEntity> findByAccount_IdAndTimestampGreaterThanEqualOrderByTimestampDesc(UUID accountId, Instant from);
+
+    List<TransactionEntity> findByAccount_IdAndTimestampLessThanEqualOrderByTimestampDesc(UUID accountId, Instant to);
+
+    List<TransactionEntity> findByAccount_IdAndTimestampBetweenOrderByTimestampDesc(UUID accountId, Instant from, Instant to);
+}
