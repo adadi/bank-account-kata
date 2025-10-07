@@ -26,7 +26,7 @@ export interface WithdrawResponse {
 }
 
 export interface TransactionResponse {
-  type: 'DEPOSIT' | 'WITHDRAW'
+  type: 'DEPOSIT' | 'WITHDRAWAL'
   amount: Money
   timestamp: string
   resultingBalance: Money

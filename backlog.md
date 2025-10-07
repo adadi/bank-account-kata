@@ -280,3 +280,32 @@ Errors
 	•	409: clear message + current balance.
 	•	400: “Invalid amount.”
 	•	404: “Account not found.”
+
+⸻
+
+US16 — List Transactions (period + pagination)
+
+Context: display account history with date filtering.
+Goal: show and filter transactions by period, with pagination.
+
+API:
+GET /accounts/{id}/transactions?from&to
+	•	Default values: to = now, from = now - 30 days.
+
+UI/UX
+	•	Page: /transactions.
+	•	Fields: from / to (<input type="datetime-local">), Search button.
+	•	Table sorted descending by timestamp.
+	•	Pagination controls:
+	•	page (0..),
+	•	size (default 50, max 100).
+	•	Display applied period and hasNext indicator.
+
+Rules / Validation
+	•	from <= to, otherwise show an error message.
+	•	If both fields are empty → use default 30-day range.
+	•	Limit size to a maximum of 100 on the frontend.
+
+Errors
+	•	400: show backend error message (“Invalid range”).
+	•	404: “Account not found.”
