@@ -33,5 +33,9 @@ public class Transaction {
     public BigDecimal getAmount() { return amount; }
     public Instant getTimestamp() { return timestamp; }
     public BigDecimal getResultingBalance() { return resultingBalance; }
-}
 
+    // Factory for mapping from persistence layer
+    public static Transaction of(UUID id, TransactionType type, BigDecimal amount, Instant timestamp, BigDecimal resultingBalance) {
+        return new Transaction(id, type, amount, timestamp, resultingBalance);
+    }
+}
