@@ -110,4 +110,31 @@ fi
 
 echo "Transactions OK (200)"
 
-echo "\nAll checks passed: health, deposit, withdraw, transactions."
+echo "Calling /statement (CSV)..."
+code=$(curl -sS -D /tmp/statement.headers -o /tmp/statement.csv -w '%{http_code}' \
+  -H 'Accept: text/csv' \
+  "http://localhost:8080/v1/accounts/${ACCOUNT_ID}/statement")
+if [[ "$code" != "200" ]]; then
+  echo "Statement failed, status=$code, body=$(cat /tmp/statement.csv)" >&2
+  exit 1
+fi
+
+if ! grep -i -q '^content-type: *text/csv\b' /tmp/statement.headers; then
+  echo "Statement: unexpected content-type in headers:" >&2
+  cat /tmp/statement.headers >&2
+  exit 1
+fi
+
+if [[ ! -s /tmp/statement.csv ]]; then
+  echo "Statement CSV is empty" >&2
+  exit 1
+fi
+
+if [[ "$(head -n1 /tmp/statement.csv)" != "date,operation,amount,balance" ]]; then
+  echo "Statement CSV header mismatch: $(head -n1 /tmp/statement.csv)" >&2
+  exit 1
+fi
+
+echo "Statement OK (200, CSV)"
+
+echo "\nAll checks passed: health, deposit, withdraw, transactions, statement."
