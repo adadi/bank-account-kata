@@ -19,7 +19,7 @@
     </ul>
     <p v-if="error" class="error">{{ error }}</p>
     <p v-if="successMsg" class="success">{{ successMsg }}</p>
-    <p v-if="balanceText" class="info">{{ balanceText }}</p>
+    <p v-if="balanceText" class="info">{{ balanceText }} EUR</p>
   </form>
 </template>
 
