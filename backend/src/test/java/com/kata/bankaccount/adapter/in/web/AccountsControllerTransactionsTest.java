@@ -1,11 +1,11 @@
 package com.kata.bankaccount.adapter.in.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kata.bankaccount.adapter.in.web.AccountsController;
 import com.kata.bankaccount.application.dto.response.TransactionResponse;
 import com.kata.bankaccount.application.ports.in.ListTransactionsUseCase;
 import com.kata.bankaccount.application.ports.in.DepositUseCase;
 import com.kata.bankaccount.application.ports.in.WithdrawUseCase;
+import com.kata.bankaccount.application.ports.in.GetAccountUseCase;
 import com.kata.bankaccount.domain.exception.AccountNotFoundException;
 import com.kata.bankaccount.domain.model.TransactionType;
 import org.junit.jupiter.api.Test;
@@ -37,6 +37,7 @@ class AccountsControllerTransactionsTest {
     @MockBean ListTransactionsUseCase listTransactionsUseCase;
     @MockBean DepositUseCase depositUseCase;
     @MockBean WithdrawUseCase withdrawUseCase;
+    @MockBean GetAccountUseCase getAccountUseCase;
 
     @Test
     void transactions_returnsList_sortedDesc_shapeOk() throws Exception {

@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
+import { useSettingsStore } from '../stores/settings'
 
 const routes: RouteRecordRaw[] = [
   { path: '/', name: 'home', component: () => import('../views/HomeView.vue') },
@@ -11,6 +12,16 @@ const routes: RouteRecordRaw[] = [
 const router = createRouter({
   history: createWebHistory(),
   routes,
+})
+
+const protectedNames = new Set(['deposit', 'withdraw', 'transactions'])
+router.beforeEach((to) => {
+  if (protectedNames.has(String(to.name ?? ''))) {
+    const settings = useSettingsStore()
+    if (!settings.accountId) {
+      return { name: 'home' }
+    }
+  }
 })
 
 export default router

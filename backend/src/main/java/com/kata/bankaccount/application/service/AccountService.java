@@ -1,9 +1,11 @@
 package com.kata.bankaccount.application.service;
 
 import com.kata.bankaccount.application.dto.response.DepositResponse;
+import com.kata.bankaccount.application.dto.response.AccountResponse;
 import com.kata.bankaccount.application.dto.response.TransactionResponse;
 import com.kata.bankaccount.application.dto.response.WithdrawResponse;
 import com.kata.bankaccount.application.ports.in.DepositUseCase;
+import com.kata.bankaccount.application.ports.in.GetAccountUseCase;
 import com.kata.bankaccount.application.ports.in.ListTransactionsUseCase;
 import com.kata.bankaccount.application.ports.in.WithdrawUseCase;
 import com.kata.bankaccount.application.ports.out.AccountRepository;
@@ -19,7 +21,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Service
-public class AccountService implements DepositUseCase, WithdrawUseCase, ListTransactionsUseCase {
+public class AccountService implements DepositUseCase, WithdrawUseCase, ListTransactionsUseCase, GetAccountUseCase {
     private final AccountRepository accountRepository;
     private final OperationRepository operationRepository;
     private final TransactionyRepository transactionyRepository;
@@ -83,5 +85,13 @@ public class AccountService implements DepositUseCase, WithdrawUseCase, ListTran
                         t.getResultingBalance()
                 ))
                 .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public AccountResponse get(UUID accountId) {
+        Objects.requireNonNull(accountId, "accountId");
+        var account = accountRepository.findById(accountId);
+        return new AccountResponse(account.getId(), account.getBalance());
     }
 }

@@ -1,8 +1,9 @@
 <template>
   <h1>Settings</h1>
-  <p>Configure application preferences here.</p>
+  <SettingsForm />
 </template>
 
 <script setup lang="ts">
+import SettingsForm from '../components/SettingsForm.vue'
 </script>
 

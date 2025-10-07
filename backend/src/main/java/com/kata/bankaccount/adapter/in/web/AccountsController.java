@@ -3,9 +3,11 @@ package com.kata.bankaccount.adapter.in.web;
 import com.kata.bankaccount.application.dto.request.DepositRequest;
 import com.kata.bankaccount.application.dto.request.WithdrawRequest;
 import com.kata.bankaccount.application.dto.response.DepositResponse;
+import com.kata.bankaccount.application.dto.response.AccountResponse;
 import com.kata.bankaccount.application.dto.response.WithdrawResponse;
 import com.kata.bankaccount.application.dto.response.TransactionResponse;
 import com.kata.bankaccount.application.ports.in.DepositUseCase;
+import com.kata.bankaccount.application.ports.in.GetAccountUseCase;
 import com.kata.bankaccount.application.ports.in.ListTransactionsUseCase;
 import com.kata.bankaccount.application.ports.in.WithdrawUseCase;
 import jakarta.validation.Valid;
@@ -33,11 +35,34 @@ public class AccountsController {
     private final DepositUseCase depositUseCase;
     private final WithdrawUseCase withdrawUseCase;
     private final ListTransactionsUseCase listTransactionsUseCase;
+    private final GetAccountUseCase getAccountUseCase;
 
-    public AccountsController(DepositUseCase depositUseCase, WithdrawUseCase withdrawUseCase, ListTransactionsUseCase listTransactionsUseCase) {
+    public AccountsController(DepositUseCase depositUseCase, WithdrawUseCase withdrawUseCase, ListTransactionsUseCase listTransactionsUseCase, GetAccountUseCase getAccountUseCase) {
         this.depositUseCase = depositUseCase;
         this.withdrawUseCase = withdrawUseCase;
         this.listTransactionsUseCase = listTransactionsUseCase;
+        this.getAccountUseCase = getAccountUseCase;
+    }
+
+    @GetMapping("/{id}")
+    @Operation(
+            summary = "Get account",
+            description = "Get account details (id and balance)"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Account details",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = AccountResponse.class),
+                            examples = @ExampleObject(value = "{\n  \"accountId\": \"6c0e3b06-8d1e-4b5f-8f9a-8d2d7a1a0c00\",\n  \"balance\": 150.00\n}"))),
+            @ApiResponse(responseCode = "404", description = "Account not found",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = com.kata.bankaccount.adapter.in.web.dto.ApiErrorResponse.class),
+                            examples = @ExampleObject(value = "{\n  \"code\": \"ACCOUNT_NOT_FOUND\",\n  \"message\": \"Account not found\"\n}")))
+    })
+    public AccountResponse getAccount(
+            @Parameter(description = "Account ID") @PathVariable("id") UUID accountId
+    ) {
+        return getAccountUseCase.get(accountId);
     }
 
     @PostMapping("/{id}/deposit")

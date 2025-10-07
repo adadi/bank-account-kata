@@ -17,5 +17,9 @@ public interface AccountRepository {
      * Persist the account's state (balance and transactions).
      */
     void save(Account account);
-}
 
+    /**
+     * Load the account without acquiring a lock. Throws AccountNotFoundException when absent.
+     */
+    Account findById(UUID accountId);
+}

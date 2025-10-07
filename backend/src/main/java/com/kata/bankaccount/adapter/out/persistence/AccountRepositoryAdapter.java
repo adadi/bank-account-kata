@@ -7,6 +7,7 @@ import com.kata.bankaccount.domain.exception.AccountNotFoundException;
 import com.kata.bankaccount.application.ports.out.AccountRepository;
 import com.kata.bankaccount.domain.model.Account;
 import com.kata.bankaccount.domain.model.Transaction;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +17,7 @@ import java.util.UUID;
 
 @Repository
 @Transactional
+@Slf4j
 public class AccountRepositoryAdapter implements AccountRepository {
 
     private final AccountJpaRepository accountJpaRepository;
@@ -60,5 +62,13 @@ public class AccountRepositoryAdapter implements AccountRepository {
         }
 
         accountJpaRepository.save(entity);
+    }
+
+    @Override
+    public Account findById(UUID accountId) {
+        log.info("findById count",accountJpaRepository.count());
+        var entity = accountJpaRepository.findById(accountId)
+                .orElseThrow(() -> new AccountNotFoundException(accountId));
+        return new Account(entity.getId(), entity.getBalance());
     }
 }

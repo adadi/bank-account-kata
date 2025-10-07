@@ -226,3 +226,24 @@ Sub-tasks
 Definition of Done (DoD):
 	•	npm run dev, npm run build, npm run lint, npm run test all succeed.
 	•	API health status displayed on the homepage.
+
+**US13 — Page Compte (Settings)**
+
+Contexte : saisir accountId.
+Objectif : stocker ces infos et les utiliser dans chaque appel.
+
+API : —
+UI/UX : page /settings avec un champs : Account ID (UUID).
+
+Règles/Validation
+	•	accountId : UUID valide (regex simple).
+	•	Sauvegarde dans Pinia + localStorage (plugin de persistance).
+
+Erreurs : message “UUID invalide”.
+
+G/W/T
+	•	Given je saisis un UUID
+	•	When je clique “Enregistrer”
+	•	Then je vois un badge avec l’ID dans le header.
+
+DoD : rechargement page → valeurs toujours présentes.
