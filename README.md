@@ -56,12 +56,13 @@ Example calls (use the default account):
 **E2E Script**
 - Script: `e2e.sh`
 - It builds the image, starts Docker Compose, waits for health, then calls:
-  - `/deposit` (expects 201), `/withdraw` (expects 200), `/transactions` (expects 200).
+  - `/v1/accounts/deposit` (expects 201), `/v1/accounts/withdraw` (expects 200), `/v1/accounts/transactions` (expects 200), `/v1/accounts/` (expects 200),`/v1/accounts/statement` (expects 200) .
 - Set `KEEP=1` to keep containers running after the script: `KEEP=1 ./e2e.sh`
 
 **Troubleshooting**
 - If health does not become UP, check logs:
-  - App logs: `docker compose logs -f app`
+  - Frontend logs: `docker compose logs -f frontend`
+  - Backend logs: `docker compose logs -f app`
   - DB logs: `docker compose logs -f db`
 - If a port is in use, edit `docker-compose.yml` and change `8080:8080` or `5432:5432`or `80:80`.
 - If you use `docker-compose` (with a dash), replace `docker compose` with `docker-compose` in commands (and in `e2e.sh` if needed).
