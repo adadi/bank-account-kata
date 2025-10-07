@@ -54,6 +54,23 @@ import uuid; print(uuid.uuid4())
 PY
 }
 
+echo "\nCalling GET /accounts/${ACCOUNT_ID}..."
+code=$(curl -sS -o /tmp/account.json -w '%{http_code}' \
+  http://localhost:8080/accounts/${ACCOUNT_ID})
+if [[ "$code" != "200" ]]; then
+  echo "Get account failed, status=$code, body=$(cat /tmp/account.json)" >&2
+  exit 1
+fi
+if ! grep -q '"accountId":"'"$ACCOUNT_ID"'"' /tmp/account.json; then
+  echo "Get account: unexpected accountId in body=$(cat /tmp/account.json)" >&2
+  exit 1
+fi
+if ! grep -q '"balance":' /tmp/account.json; then
+  echo "Get account: missing balance in body=$(cat /tmp/account.json)" >&2
+  exit 1
+fi
+echo "Get account OK (200)"
+
 echo "\nCalling /deposit..."
 OP1=$(gen_uuid)
 code=$(curl -sS -o /tmp/deposit.json -w '%{http_code}' -X POST \

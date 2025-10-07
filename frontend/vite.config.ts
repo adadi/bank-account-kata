@@ -6,13 +6,10 @@ export default defineConfig({
   plugins: [vue()],
   server: {
     proxy: {
-      '/actuator': {
-        target: 'http://localhost:8080',
-        changeOrigin: true,
-      },
       '/api': {
         target: 'http://localhost:8080',
         changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''),
       },
     },
   },

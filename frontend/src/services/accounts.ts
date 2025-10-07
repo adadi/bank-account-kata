@@ -46,24 +46,24 @@ function requireAccountId(): string {
 
 export async function deposit(req: DepositRequest) {
   const id = requireAccountId()
-  const { data, status } = await http.post<DepositResponse>(`/api/accounts/${id}/deposit`, req)
+  const { data, status } = await http.post<DepositResponse>(`/accounts/${id}/deposit`, req)
   return { data, status }
 }
 
 export async function withdraw(req: WithdrawRequest) {
   const id = requireAccountId()
-  const { data, status } = await http.post<WithdrawResponse>(`/api/accounts/${id}/withdraw`, req)
+  const { data, status } = await http.post<WithdrawResponse>(`/accounts/${id}/withdraw`, req)
   return { data, status }
 }
 
 export async function listTransactions(params?: { from?: string; to?: string }) {
   const id = requireAccountId()
-  const { data } = await http.get<TransactionResponse[]>(`/api/accounts/${id}/transactions`, { params })
+  const { data } = await http.get<TransactionResponse[]>(`/accounts/${id}/transactions`, { params })
   return data
 }
 
 export async function getAccount(accountId?: string) {
   const id = (accountId ?? requireAccountId()).trim()
-  const { data } = await http.get<AccountResponse>(`/api/accounts/${id}`)
+  const { data } = await http.get<AccountResponse>(`/accounts/${id}`)
   return { data }
 }
