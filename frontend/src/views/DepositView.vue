@@ -19,7 +19,7 @@
     </ul>
     <p v-if="error" class="error">{{ error }}</p>
     <p v-if="successMsg" class="success">{{ successMsg }}</p>
-    <p v-if="balanceText" class="info">{{ balanceText }}</p>
+    <p v-if="balanceText" class="info">{{ balanceText }} EUR</p>
   </form>
 </template>
 
@@ -39,16 +39,7 @@ const balanceText = computed(() => account.balance !== undefined ? `Balance: ${a
 const AMOUNT_REGEX = /^(?:\d+)(?:\.\d{1,2})?$/
 
 function genOperationId(): string {
-  if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) {
-    // @ts-ignore - supported in modern browsers
     return crypto.randomUUID()
-  }
-  // Fallback UUID v4 generator
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-    const r = (Math.random() * 16) | 0
-    const v = c === 'x' ? r : (r & 0x3) | 0x8
-    return v.toString(16)
-  })
 }
 
 async function onSubmit() {
@@ -78,6 +69,7 @@ async function onSubmit() {
     account.balance = data.balance
     // Message by status code
     successMsg.value = status === 201 ? 'Deposit applied' : 'Already applied'
+    amountInput.value = "";
   } catch (e: any) {
     const status = e?.response?.status
     if (status === 400) {
@@ -116,15 +108,15 @@ input[type="text"] {
   color: #666;
 }
 .error {
-  color: #b00020;
+  color: #f60733;
   margin-top: 0.5rem;
 }
 .success {
-  color: #0a5a2a;
+  color: #22ff00;
   margin-top: 0.5rem;
 }
 .info {
-  color: #0a2a58;
+  color: #ffffff;
   margin-top: 0.25rem;
 }
 </style>
