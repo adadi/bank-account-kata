@@ -4,6 +4,7 @@ import com.kata.bankaccount.application.dto.response.AccountResponse;
 import com.kata.bankaccount.application.ports.in.DepositUseCase;
 import com.kata.bankaccount.application.ports.in.GetAccountUseCase;
 import com.kata.bankaccount.application.ports.in.ListTransactionsUseCase;
+import com.kata.bankaccount.application.ports.in.ExportStatementUseCase;
 import com.kata.bankaccount.application.ports.in.WithdrawUseCase;
 import com.kata.bankaccount.domain.exception.AccountNotFoundException;
 import org.junit.jupiter.api.Test;
@@ -30,6 +31,7 @@ class AccountsControllerGetTest {
     @MockBean WithdrawUseCase withdrawUseCase;
     @MockBean ListTransactionsUseCase listTransactionsUseCase;
     @MockBean GetAccountUseCase getAccountUseCase;
+    @MockBean ExportStatementUseCase exportStatementUseCase;
 
     @Test
     void getAccount_returns200() throws Exception {
@@ -54,4 +56,3 @@ class AccountsControllerGetTest {
                 .andExpect(jsonPath("$.code").value("ACCOUNT_NOT_FOUND"));
     }
 }
-
