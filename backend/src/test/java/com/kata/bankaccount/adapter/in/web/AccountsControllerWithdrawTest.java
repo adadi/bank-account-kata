@@ -48,7 +48,7 @@ class AccountsControllerWithdrawTest {
                 "operationId", operationId.toString()
         );
 
-        mockMvc.perform(post("/accounts/" + accountId + "/withdraw")
+        mockMvc.perform(post("/v1/accounts/" + accountId + "/withdraw")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(body)))
                 .andExpect(status().isOk())
@@ -69,7 +69,7 @@ class AccountsControllerWithdrawTest {
                 "operationId", operationId.toString()
         );
 
-        mockMvc.perform(post("/accounts/" + accountId + "/withdraw")
+        mockMvc.perform(post("/v1/accounts/" + accountId + "/withdraw")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(body)))
                 .andExpect(status().isConflict())
@@ -84,7 +84,7 @@ class AccountsControllerWithdrawTest {
                 "operationId", UUID.randomUUID().toString()
         );
 
-        mockMvc.perform(post("/accounts/" + accountId + "/withdraw")
+        mockMvc.perform(post("/v1/accounts/" + accountId + "/withdraw")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(body)))
                 .andExpect(status().isBadRequest())
@@ -104,7 +104,7 @@ class AccountsControllerWithdrawTest {
                 "operationId", operationId.toString()
         );
 
-        mockMvc.perform(post("/accounts/" + accountId + "/withdraw")
+        mockMvc.perform(post("/v1/accounts/" + accountId + "/withdraw")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(body)))
                 .andExpect(status().isNotFound())

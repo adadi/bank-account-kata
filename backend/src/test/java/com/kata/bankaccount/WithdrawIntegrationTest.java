@@ -54,13 +54,13 @@ class WithdrawIntegrationTest {
         );
 
         // When - first call applied
-        mockMvc.perform(post("/accounts/" + accountId + "/withdraw")
+        mockMvc.perform(post("/v1/accounts/" + accountId + "/withdraw")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(body)))
                 .andExpect(status().isOk());
 
         // When - second call idempotent
-        mockMvc.perform(post("/accounts/" + accountId + "/withdraw")
+        mockMvc.perform(post("/v1/accounts/" + accountId + "/withdraw")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(body)))
                 .andExpect(status().isOk());
@@ -123,7 +123,7 @@ class WithdrawIntegrationTest {
                 "amount", amount,
                 "operationId", operationId.toString()
         );
-        return mockMvc.perform(post("/accounts/" + accountId + "/withdraw")
+        return mockMvc.perform(post("/v1/accounts/" + accountId + "/withdraw")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(body)))
                 .andReturn()
@@ -139,7 +139,7 @@ class WithdrawIntegrationTest {
                 "operationId", operationId.toString()
         );
 
-        mockMvc.perform(post("/accounts/" + missingAccountId + "/withdraw")
+        mockMvc.perform(post("/v1/accounts/" + missingAccountId + "/withdraw")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(body)))
                 .andExpect(status().isNotFound())

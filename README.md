@@ -15,7 +15,8 @@ This project is a simple bank account API. It has three main endpoints: deposit,
   - If a port is busy, edit `docker-compose.yml` and change the port mapping.
 
 **Ports**
-- App: `http://localhost:8080` → make sure nothing else uses port 8080.
+- Front: `http://localhost:80` → make sure nothing else uses port 8080.
+- Backend: `http://localhost:8080` → make sure nothing else uses port 8080.
 - PostgreSQL: `localhost:5432` → make sure nothing else uses port 5432.
 
 **Seed Data**
@@ -23,17 +24,17 @@ This project is a simple bank account API. It has three main endpoints: deposit,
 - Default account id: `11111111-1111-1111-1111-111111111111`.
 
 **Endpoints**
-- `GET /accounts/{id}`
-- `POST /accounts/{id}/deposit`
-- `POST /accounts/{id}/withdraw`
-- `GET /accounts/{id}/transactions`
+- `GET /v1/accounts/{id}`
+- `POST /v1/accounts/{id}/deposit`
+- `POST /v1/accounts/{id}/withdraw`
+- `GET /v1/accounts/{id}/transactions`
 - Health: `GET /actuator/health`
 
 Example calls (use the default account):
-- Account: `curl http://localhost:8080/accounts/11111111-1111-1111-1111-111111111111`
-- Deposit: `curl -X POST -H 'Content-Type: application/json' -d '{"amount":"50.00","operationId":"<uuid>"}' http://localhost:8080/accounts/11111111-1111-1111-1111-111111111111/deposit`
-- Withdraw: `curl -X POST -H 'Content-Type: application/json' -d '{"amount":"20.00","operationId":"<uuid>"}' http://localhost:8080/accounts/11111111-1111-1111-1111-111111111111/withdraw`
-- Transactions: `curl http://localhost:8080/accounts/11111111-1111-1111-1111-111111111111/transactions`
+- Account: `curl http://localhost:8080/v1/accounts/11111111-1111-1111-1111-111111111111`
+- Deposit: `curl -X POST -H 'Content-Type: application/json' -d '{"amount":"50.00","operationId":"<uuid>"}' http://localhost:8080/v1/accounts/11111111-1111-1111-1111-111111111111/deposit`
+- Withdraw: `curl -X POST -H 'Content-Type: application/json' -d '{"amount":"20.00","operationId":"<uuid>"}' http://localhost:8080/v1/accounts/11111111-1111-1111-1111-111111111111/withdraw`
+- Transactions: `curl http://localhost:8080/v1/accounts/11111111-1111-1111-1111-111111111111/transactions`
 
 **Why operationId?**
 - We send an `operationId` in each write request (deposit or withdraw).
@@ -57,6 +58,6 @@ Example calls (use the default account):
 - If health does not become UP, check logs:
   - App logs: `docker compose logs -f app`
   - DB logs: `docker compose logs -f db`
-- If a port is in use, edit `docker-compose.yml` and change `8080:8080` or `5432:5432`.
+- If a port is in use, edit `docker-compose.yml` and change `8080:8080` or `5432:5432`or `80:80`.
 - If you use `docker-compose` (with a dash), replace `docker compose` with `docker-compose` in commands (and in `e2e.sh` if needed).
 

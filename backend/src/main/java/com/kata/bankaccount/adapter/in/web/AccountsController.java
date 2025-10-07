@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/accounts")
+@RequestMapping("/v1/accounts")
 @Tag(name = "Accounts", description = "Operations on bank accounts")
 public class AccountsController {
 

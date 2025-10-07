@@ -52,7 +52,7 @@ class AccountsControllerTransactionsTest {
                 new TransactionResponse(TransactionType.DEPOSIT, new BigDecimal("100.00"), t1, new BigDecimal("100.00"))
         ));
 
-        mockMvc.perform(get("/accounts/" + accountId + "/transactions")
+        mockMvc.perform(get("/v1/accounts/" + accountId + "/transactions")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].type").value("DEPOSIT"))
@@ -70,7 +70,7 @@ class AccountsControllerTransactionsTest {
 
         given(listTransactionsUseCase.transactions(eq(accountId), any(), any())).willReturn(List.of());
 
-        mockMvc.perform(get("/accounts/" + accountId + "/transactions")
+        mockMvc.perform(get("/v1/accounts/" + accountId + "/transactions")
                         .param("from", from)
                         .param("to", to)
                         .accept(MediaType.APPLICATION_JSON))
@@ -85,7 +85,7 @@ class AccountsControllerTransactionsTest {
         given(listTransactionsUseCase.transactions(eq(accountId), any(), any()))
                 .willThrow(new AccountNotFoundException(accountId));
 
-        mockMvc.perform(get("/accounts/" + accountId + "/transactions")
+        mockMvc.perform(get("/v1/accounts/" + accountId + "/transactions")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.code").value("ACCOUNT_NOT_FOUND"));

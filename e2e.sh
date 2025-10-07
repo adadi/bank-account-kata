@@ -54,9 +54,9 @@ import uuid; print(uuid.uuid4())
 PY
 }
 
-echo "\nCalling GET /accounts/${ACCOUNT_ID}..."
+echo "\nCalling GET /v1/accounts/${ACCOUNT_ID}..."
 code=$(curl -sS -o /tmp/account.json -w '%{http_code}' \
-  http://localhost:8080/accounts/${ACCOUNT_ID})
+  http://localhost:8080/v1/accounts/${ACCOUNT_ID})
 if [[ "$code" != "200" ]]; then
   echo "Get account failed, status=$code, body=$(cat /tmp/account.json)" >&2
   exit 1
@@ -76,7 +76,7 @@ OP1=$(gen_uuid)
 code=$(curl -sS -o /tmp/deposit.json -w '%{http_code}' -X POST \
   -H 'Content-Type: application/json' \
   -d '{"amount":"50.00","operationId":"'"$OP1"'"}' \
-  http://localhost:8080/accounts/${ACCOUNT_ID}/deposit)
+  http://localhost:8080/v1/accounts/${ACCOUNT_ID}/deposit)
 if [[ "$code" != "201" ]]; then
   echo "Deposit failed, status=$code, body=$(cat /tmp/deposit.json)" >&2
   exit 1
@@ -88,7 +88,7 @@ OP2=$(gen_uuid)
 code=$(curl -sS -o /tmp/withdraw.json -w '%{http_code}' -X POST \
   -H 'Content-Type: application/json' \
   -d '{"amount":"20.00","operationId":"'"$OP2"'"}' \
-  http://localhost:8080/accounts/${ACCOUNT_ID}/withdraw)
+  http://localhost:8080/v1/accounts/${ACCOUNT_ID}/withdraw)
 if [[ "$code" != "200" ]]; then
   echo "Withdraw failed, status=$code, body=$(cat /tmp/withdraw.json)" >&2
   exit 1
@@ -97,7 +97,7 @@ echo "Withdraw OK (200)"
 
 echo "Calling /transactions..."
 code=$(curl -sS -o /tmp/transactions.json -w '%{http_code}' \
-  http://localhost:8080/accounts/${ACCOUNT_ID}/transactions)
+  http://localhost:8080/v1/accounts/${ACCOUNT_ID}/transactions)
 if [[ "$code" != "200" ]]; then
   echo "Transactions failed, status=$code, body=$(cat /tmp/transactions.json)" >&2
   exit 1

@@ -48,7 +48,7 @@ class AccountsControllerDepositTest {
                 "operationId", operationId.toString()
         );
 
-        mockMvc.perform(post("/accounts/" + accountId + "/deposit")
+        mockMvc.perform(post("/v1/accounts/" + accountId + "/deposit")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(body)))
                 .andExpect(status().isNotFound())

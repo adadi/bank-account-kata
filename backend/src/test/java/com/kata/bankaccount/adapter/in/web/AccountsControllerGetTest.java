@@ -36,7 +36,7 @@ class AccountsControllerGetTest {
         UUID id = UUID.randomUUID();
         when(getAccountUseCase.get(id)).thenReturn(new AccountResponse(id, new BigDecimal("0.00")));
 
-        mvc.perform(get("/accounts/{id}", id))
+        mvc.perform(get("/v1/accounts/{id}", id))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.accountId").value(id.toString()))
@@ -48,7 +48,7 @@ class AccountsControllerGetTest {
         UUID id = UUID.randomUUID();
         when(getAccountUseCase.get(id)).thenThrow(new AccountNotFoundException(id));
 
-        mvc.perform(get("/accounts/{id}", id))
+        mvc.perform(get("/v1/accounts/{id}", id))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.code").value("ACCOUNT_NOT_FOUND"));

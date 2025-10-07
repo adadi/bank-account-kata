@@ -50,7 +50,7 @@ Given/When/Then
 
 ⸻
 
-US4 — Endpoint POST /accounts/{id}/deposit
+US4 — Endpoint POST /v1/accounts/{id}/deposit
 
 Body: { amount, operationId }.
 
@@ -70,7 +70,7 @@ Given/When/Then
 
 ⸻
 
-US5 — Endpoint POST /accounts/{id}/withdraw
+US5 — Endpoint POST /v1/accounts/{id}/withdraw
 
 Body: { amount, operationId }.
 
@@ -145,7 +145,7 @@ Given/When/Then
 
 ⸻
 
-US9 — Endpoint GET /accounts/{id}/transactions?from&to
+US9 — Endpoint GET /v1/accounts/{id}/transactions?from&to
 
 Tests to write
 	•	REST API:
@@ -218,7 +218,7 @@ US13 — Account Page (Settings)
 Context: allow the user to enter their accountId.
 Goal: store this information and reuse it for all API calls.
 
-API: — /accounts/${ACCOUNT_ID}
+API: — /v1/accounts/${ACCOUNT_ID}
 
 UI/UX:
 	•	Page /settings with one field: Account ID (UUID).
@@ -237,7 +237,7 @@ US14 — Deposit Form
 Context: related to the “deposit” use case.
 Goal: send an idempotent deposit request.
 
-API: POST /accounts/{id}/deposit
+API: POST /v1/accounts/{id}/deposit
 Body: { amount, operationId }
 
 UI/UX
@@ -264,7 +264,7 @@ US15 — Withdrawal Form
 Context: related to the “withdraw” use case.
 Goal: perform a withdrawal with proper error handling.
 
-API: POST /accounts/{id}/withdraw
+API: POST /v1/accounts/{id}/withdraw
 Body: { amount, operationId }
 
 UI/UX
@@ -289,7 +289,7 @@ Context: display account history with date filtering.
 Goal: show and filter transactions by period, with pagination.
 
 API:
-GET /accounts/{id}/transactions?from&to
+GET /v1/accounts/{id}/transactions?from&to
 	•	Default values: to = now, from = now - 30 days.
 
 UI/UX

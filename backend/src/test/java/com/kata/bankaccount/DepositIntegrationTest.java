@@ -47,7 +47,7 @@ class DepositIntegrationTest {
         );
 
         // When
-        mockMvc.perform(post("/accounts/" + accountId + "/deposit")
+        mockMvc.perform(post("/v1/accounts/" + accountId + "/deposit")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(body)))
                 .andExpect(status().isCreated());
@@ -69,13 +69,13 @@ class DepositIntegrationTest {
         );
 
         // When - first call applied
-        mockMvc.perform(post("/accounts/" + accountId + "/deposit")
+        mockMvc.perform(post("/v1/accounts/" + accountId + "/deposit")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(body)))
                 .andExpect(status().isCreated());
 
         // When - second call idempotent
-        mockMvc.perform(post("/accounts/" + accountId + "/deposit")
+        mockMvc.perform(post("/v1/accounts/" + accountId + "/deposit")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(body)))
                 .andExpect(status().isOk());
@@ -96,7 +96,7 @@ class DepositIntegrationTest {
                 "operationId", operationId.toString()
         );
 
-        mockMvc.perform(post("/accounts/" + missingAccountId + "/deposit")
+        mockMvc.perform(post("/v1/accounts/" + missingAccountId + "/deposit")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(body)))
                 .andExpect(status().isNotFound())

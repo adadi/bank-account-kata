@@ -55,7 +55,7 @@ class TransactionsStatementIntegrationTest {
                 .andExpect(status().isCreated());
 
         // When: I request the statement
-        var mvcResult = mockMvc.perform(get("/accounts/" + accountId + "/transactions")
+        var mvcResult = mockMvc.perform(get("/v1/accounts/" + accountId + "/transactions")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -84,7 +84,7 @@ class TransactionsStatementIntegrationTest {
                 .findFirst().orElseThrow()
                 .getTimestamp();
 
-        var mvcFiltered = mockMvc.perform(get("/accounts/" + accountId + "/transactions")
+        var mvcFiltered = mockMvc.perform(get("/v1/accounts/" + accountId + "/transactions")
                         .param("from", withdrawalTs.toString())
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -102,7 +102,7 @@ class TransactionsStatementIntegrationTest {
     void transactions_nonExistentAccount_returns404_withCode() throws Exception {
         UUID missingAccountId = UUID.randomUUID();
 
-        mockMvc.perform(get("/accounts/" + missingAccountId + "/transactions")
+        mockMvc.perform(get("/v1/accounts/" + missingAccountId + "/transactions")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.code").value("ACCOUNT_NOT_FOUND"));
@@ -113,7 +113,7 @@ class TransactionsStatementIntegrationTest {
                 "amount", amount,
                 "operationId", operationId.toString()
         );
-        return mockMvc.perform(post("/accounts/" + accountId + "/deposit")
+        return mockMvc.perform(post("/v1/accounts/" + accountId + "/deposit")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(body)));
     }
@@ -123,7 +123,7 @@ class TransactionsStatementIntegrationTest {
                 "amount", amount,
                 "operationId", operationId.toString()
         );
-        return mockMvc.perform(post("/accounts/" + accountId + "/withdraw")
+        return mockMvc.perform(post("/v1/accounts/" + accountId + "/withdraw")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(body)));
     }
