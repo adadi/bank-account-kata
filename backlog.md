@@ -256,3 +256,27 @@ Rules / Validation
 Errors
 	•	400: “Invalid amount”
 	•	404: “Account not found”
+
+⸻
+
+US15 — Withdrawal Form
+
+Context: related to the “withdraw” use case.
+Goal: perform a withdrawal with proper error handling.
+
+API: POST /accounts/{id}/withdraw
+Body: { amount, operationId }
+
+UI/UX
+	•	Page: /withdraw.
+	•	Field: amount (> 0).
+	•	Button: Withdraw.
+	•	On error 409, display “Insufficient funds” + show currentBalance if provided by backend; update the screen accordingly.
+
+Rules / Validation
+	•	amount > 0.
+
+Errors
+	•	409: clear message + current balance.
+	•	400: “Invalid amount.”
+	•	404: “Account not found.”
