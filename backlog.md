@@ -325,3 +325,20 @@ Acceptance Criteria
 	•	docker compose up starts without errors.
 	•	Frontend accessible at http://localhost:5173.
 	•	Refreshing any SPA route works correctly (Nginx fallback verified).
+
+US18 — Add endpoint /v1/accounts/{id}/statement returning account statement as CSV
+
+Description
+As a banking customer,
+I want to export my account statement in CSV format,
+So that I can easily view and print my transactions (date, amount, balance).
+
+Acceptance Criteria
+	•	Add endpoint:
+GET /v1/accounts/{id}/statement
+	•	The endpoint returns a CSV response (Content-Type: text/csv).
+	•	Each CSV line includes:
+	•	date (ISO format)
+	•	operation (DEPOSIT or WITHDRAWAL)
+	•	amount
+	•	balanceAfter (balance after operation)

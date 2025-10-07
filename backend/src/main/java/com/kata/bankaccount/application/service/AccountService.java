@@ -6,6 +6,7 @@ import com.kata.bankaccount.application.dto.response.TransactionResponse;
 import com.kata.bankaccount.application.dto.response.WithdrawResponse;
 import com.kata.bankaccount.application.ports.in.DepositUseCase;
 import com.kata.bankaccount.application.ports.in.GetAccountUseCase;
+import com.kata.bankaccount.application.ports.in.ExportStatementUseCase;
 import com.kata.bankaccount.application.ports.in.ListTransactionsUseCase;
 import com.kata.bankaccount.application.ports.in.WithdrawUseCase;
 import com.kata.bankaccount.application.ports.out.AccountRepository;
@@ -16,12 +17,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
 @Service
-public class AccountService implements DepositUseCase, WithdrawUseCase, ListTransactionsUseCase, GetAccountUseCase {
+public class AccountService implements DepositUseCase, WithdrawUseCase, ListTransactionsUseCase, GetAccountUseCase, ExportStatementUseCase {
     private final AccountRepository accountRepository;
     private final OperationRepository operationRepository;
     private final TransactionyRepository transactionyRepository;
@@ -93,5 +96,33 @@ public class AccountService implements DepositUseCase, WithdrawUseCase, ListTran
         Objects.requireNonNull(accountId, "accountId");
         var account = accountRepository.findById(accountId);
         return new AccountResponse(account.getId(), account.getBalance());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public String statementCsv(UUID accountId, LocalDate from, LocalDate to) {
+        Objects.requireNonNull(accountId, "accountId");
+        // Ensure account exists → 404 when missing
+        accountRepository.findById(accountId);
+
+        Instant fromInstant = null;
+        Instant toInstant = null;
+        if (from != null) {
+            fromInstant = from.atStartOfDay(ZoneOffset.UTC).toInstant();
+        }
+        if (to != null) {
+            // inclusive end-of-day in UTC
+            toInstant = to.plusDays(1).atStartOfDay(ZoneOffset.UTC).toInstant().minusNanos(1);
+        }
+
+        var sb = new StringBuilder();
+        sb.append("date,operation,amount,balance\n");
+        transactionyRepository.findByAccountAndPeriod(accountId, fromInstant, toInstant)
+                .forEach(t -> sb
+                        .append(t.getTimestamp()).append(',')
+                        .append(t.getType()).append(',')
+                        .append(t.getAmount()).append(',')
+                        .append(t.getResultingBalance()).append('\n'));
+        return sb.toString();
     }
 }

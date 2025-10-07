@@ -6,6 +6,7 @@ import com.kata.bankaccount.application.ports.in.DepositUseCase;
 import com.kata.bankaccount.application.ports.in.ListTransactionsUseCase;
 import com.kata.bankaccount.application.ports.in.WithdrawUseCase;
 import com.kata.bankaccount.application.ports.in.GetAccountUseCase;
+import com.kata.bankaccount.application.ports.in.ExportStatementUseCase;
 import com.kata.bankaccount.domain.exception.AccountNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,7 @@ class AccountsControllerDepositTest {
     @MockBean WithdrawUseCase withdrawUseCase;
     @MockBean ListTransactionsUseCase listTransactionsUseCase;
     @MockBean GetAccountUseCase getAccountUseCase;
+    @MockBean ExportStatementUseCase exportStatementUseCase;
 
     @Test
     void deposit_returns404_whenAccountNotFound() throws Exception {

@@ -28,6 +28,7 @@ This project is a simple bank account API. It has three main endpoints: deposit,
 - `POST /v1/accounts/{id}/deposit`
 - `POST /v1/accounts/{id}/withdraw`
 - `GET /v1/accounts/{id}/transactions`
+- `GET /v1/accounts/{id}/statement`
 - Health: `GET /actuator/health`
 
 Example calls (use the default account):
@@ -35,6 +36,7 @@ Example calls (use the default account):
 - Deposit: `curl -X POST -H 'Content-Type: application/json' -d '{"amount":"50.00","operationId":"<uuid>"}' http://localhost:8080/v1/accounts/11111111-1111-1111-1111-111111111111/deposit`
 - Withdraw: `curl -X POST -H 'Content-Type: application/json' -d '{"amount":"20.00","operationId":"<uuid>"}' http://localhost:8080/v1/accounts/11111111-1111-1111-1111-111111111111/withdraw`
 - Transactions: `curl http://localhost:8080/v1/accounts/11111111-1111-1111-1111-111111111111/transactions`
+- Statement: `curl http://localhost:8080/v1/accounts/11111111-1111-1111-1111-111111111111/statement`
 
 **Why operationId?**
 - We send an `operationId` in each write request (deposit or withdraw).

@@ -5,6 +5,7 @@ import com.kata.bankaccount.application.ports.in.WithdrawUseCase;
 import com.kata.bankaccount.application.ports.in.DepositUseCase;
 import com.kata.bankaccount.application.ports.in.ListTransactionsUseCase;
 import com.kata.bankaccount.application.ports.in.GetAccountUseCase;
+import com.kata.bankaccount.application.ports.in.ExportStatementUseCase;
 import com.kata.bankaccount.domain.exception.InsufficientFundsException;
 import com.kata.bankaccount.domain.exception.AccountNotFoundException;
 import org.junit.jupiter.api.Test;
@@ -34,6 +35,7 @@ class AccountsControllerWithdrawTest {
     @MockBean DepositUseCase depositUseCase;
     @MockBean ListTransactionsUseCase listTransactionsUseCase;
     @MockBean GetAccountUseCase getAccountUseCase;
+    @MockBean ExportStatementUseCase exportStatementUseCase;
 
     @Test
     void withdraw_returns200_whenOk() throws Exception {

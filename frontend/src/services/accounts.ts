@@ -67,3 +67,15 @@ export async function getAccount(accountId?: string) {
   const { data } = await http.get<AccountResponse>(`/v1/accounts/${id}`)
   return { data }
 }
+
+export async function getStatementCsv(params?: { from?: string; to?: string }) {
+  const id = requireAccountId()
+  const response = await http.get(`/v1/accounts/${id}/statement`, {
+    params,
+    responseType: 'blob',
+    headers: {
+      Accept: 'text/csv, application/json',
+    },
+  })
+  return response
+}

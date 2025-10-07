@@ -4,15 +4,19 @@
     <div class="row">
       <div class="field">
         <label for="from">From</label>
-        <input id="from" v-model="fromInput" type="datetime-local" />
+        <input id="from" v-model="fromInput" type="date" />
       </div>
       <div class="field">
         <label for="to">To</label>
-        <input id="to" v-model="toInput" type="datetime-local" />
+        <input id="to" v-model="toInput" type="date" />
       </div>
       <div class="field small">
         <label>&nbsp;</label>
         <button type="submit" :disabled="loading">Search</button>
+      </div>
+      <div class="field small">
+        <label>&nbsp;</label>
+        <button type="button" @click="downloadCsv" :disabled="loading">Download CSV</button>
       </div>
     </div>
     <ul class="hints">
@@ -59,8 +63,8 @@
         <tr v-for="(t, idx) in paged" :key="idx">
           <td>{{ formatTimestamp(t.timestamp) }}</td>
           <td>{{ t.type }}</td>
-          <td>{{ t.amount }}</td>
-          <td>{{ t.resultingBalance }}</td>
+          <td>{{ t.amount }} Eur</td>
+          <td>{{ t.resultingBalance }} Eur</td>
         </tr>
       </tbody>
     </table>
@@ -71,7 +75,7 @@
 
 <script setup lang="ts">
 import { onMounted, ref, computed } from 'vue'
-import { listTransactions, type TransactionResponse } from '../services/accounts'
+import { listTransactions, getStatementCsv, type TransactionResponse } from '../services/accounts'
 
 const fromInput = ref('')
 const toInput = ref('')
@@ -99,11 +103,23 @@ const paged = computed(() => {
   return sorted.value.slice(start, start + size.value)
 })
 
-function parseLocalDateTime(value: string): Date | null {
+function parseLocalDate(value: string): Date | null {
   if (!value) return null
-  // value like "2025-10-07T12:00"
-  const d = new Date(value)
+  // value like "2025-10-07"
+  const d = new Date(value + 'T00:00:00')
   return isNaN(d.getTime()) ? null : d
+}
+
+function startOfDay(d: Date): Date {
+  const x = new Date(d)
+  x.setHours(0, 0, 0, 0)
+  return x
+}
+
+function endOfDay(d: Date): Date {
+  const x = new Date(d)
+  x.setHours(23, 59, 59, 999)
+  return x
 }
 
 function toIsoUTC(d: Date): string {
@@ -115,10 +131,7 @@ function formatLocal(d: Date): string {
   const yyyy = d.getFullYear()
   const mm = pad(d.getMonth() + 1)
   const dd = pad(d.getDate())
-  const hh = pad(d.getHours())
-  const mi = pad(d.getMinutes())
-  const ss = pad(d.getSeconds())
-  return `${yyyy}-${mm}-${dd} ${hh}:${mi}:${ss}`
+  return `${yyyy}-${mm}-${dd}`
 }
 
 function formatTimestamp(ts: string): string {
@@ -149,8 +162,8 @@ async function onSearch() {
   try {
     // Determine effective period
     const now = new Date()
-    const to = parseLocalDateTime(toInput.value) ?? now
-    const from = parseLocalDateTime(fromInput.value) ?? new Date(to.getTime() - 30 * 24 * 60 * 60 * 1000)
+    const to = endOfDay(parseLocalDate(toInput.value) ?? now)
+    const from = startOfDay(parseLocalDate(fromInput.value) ?? new Date(to.getTime() - 30 * 24 * 60 * 60 * 1000))
 
     if (from.getTime() > to.getTime()) {
       error.value = 'Invalid range: from must be <= to'
@@ -179,6 +192,47 @@ async function onSearch() {
   }
 }
 
+async function downloadCsv() {
+  error.value = ''
+  loading.value = true
+  try {
+    const now = new Date()
+    const toDate = parseLocalDate(toInput.value) ?? now
+    const fromDate = parseLocalDate(fromInput.value) ?? new Date(toDate.getTime() - 30 * 24 * 60 * 60 * 1000)
+
+    // Same validation as search: from must be <= to
+    if (fromDate.getTime() > toDate.getTime()) {
+      error.value = 'Invalid range: from must be <= to'
+      return
+    }
+
+    // For CSV endpoint, backend expects LocalDate (YYYY-MM-DD)
+    const toStr = toDate.toISOString().slice(0, 10)
+    const fromStr = fromDate.toISOString().slice(0, 10)
+
+    const { data, status } = await getStatementCsv({ from: fromStr, to: toStr })
+
+    if (status !== 200) throw new Error('Failed to download CSV')
+    const blob = new Blob([data], { type: 'text/csv' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    const file = `statement_${fromStr}_to_${toStr}.csv`
+    a.href = url
+    a.download = file
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+  } catch (e: any) {
+    const status = e?.response?.status
+    const msg = e?.response?.data?.message
+    if (status === 404) error.value = 'Account not found'
+    else if (status === 400) error.value = msg || 'Invalid request'
+    else error.value = e?.message ?? 'Failed to download CSV'
+  } finally {
+    loading.value = false
+  }
+}
 onMounted(() => {
   // Initial load with defaults (last 30 days)
   onSearch()
@@ -200,7 +254,7 @@ onMounted(() => {
 .field { flex: 1; }
 .field.small { flex: 0 0 auto; }
 label { display: block; margin-bottom: 0.25rem; }
-input[type="datetime-local"],
+input[type="date"],
 input[type="number"] {
   width: 100%;
   padding: 0.5rem 0.75rem;

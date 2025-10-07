@@ -9,6 +9,7 @@ import com.kata.bankaccount.application.dto.response.TransactionResponse;
 import com.kata.bankaccount.application.ports.in.DepositUseCase;
 import com.kata.bankaccount.application.ports.in.GetAccountUseCase;
 import com.kata.bankaccount.application.ports.in.ListTransactionsUseCase;
+import com.kata.bankaccount.application.ports.in.ExportStatementUseCase;
 import com.kata.bankaccount.application.ports.in.WithdrawUseCase;
 import jakarta.validation.Valid;
 import io.swagger.v3.oas.annotations.Operation;
@@ -21,9 +22,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
+import java.time.LocalDate;
+import org.springframework.format.annotation.DateTimeFormat;
 import java.util.List;
 import java.util.UUID;
 
@@ -36,12 +40,14 @@ public class AccountsController {
     private final WithdrawUseCase withdrawUseCase;
     private final ListTransactionsUseCase listTransactionsUseCase;
     private final GetAccountUseCase getAccountUseCase;
+    private final ExportStatementUseCase exportStatementUseCase;
 
-    public AccountsController(DepositUseCase depositUseCase, WithdrawUseCase withdrawUseCase, ListTransactionsUseCase listTransactionsUseCase, GetAccountUseCase getAccountUseCase) {
+    public AccountsController(DepositUseCase depositUseCase, WithdrawUseCase withdrawUseCase, ListTransactionsUseCase listTransactionsUseCase, GetAccountUseCase getAccountUseCase, ExportStatementUseCase exportStatementUseCase) {
         this.depositUseCase = depositUseCase;
         this.withdrawUseCase = withdrawUseCase;
         this.listTransactionsUseCase = listTransactionsUseCase;
         this.getAccountUseCase = getAccountUseCase;
+        this.exportStatementUseCase = exportStatementUseCase;
     }
 
     @GetMapping("/{id}")
@@ -163,5 +169,34 @@ public class AccountsController {
             @RequestParam(value = "to", required = false) Instant to
     ) {
         return listTransactionsUseCase.transactions(accountId, from, to);
+    }
+
+    @GetMapping(value = "/{id}/statement", produces = {"text/csv", "application/json"})
+    @Operation(
+            summary = "Export account statement (CSV)",
+            description = "Returns the account transactions as CSV lines: date, operation, amount, balanceAfter."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "CSV statement",
+                    content = @Content(mediaType = "text/csv",
+                            examples = @ExampleObject(value = "date,operation,amount,balanceAfter\n"
+                                    + "2024-01-01T12:00:00Z,DEPOSIT,10.00,80.00\n"
+                                    + "2024-01-01T11:00:00Z,WITHDRAWAL,30.00,70.00\n"))),
+            @ApiResponse(responseCode = "404", description = "Account not found",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = com.kata.bankaccount.adapter.in.web.dto.ApiErrorResponse.class),
+                            examples = @ExampleObject(value = "{\n  \"code\": \"ACCOUNT_NOT_FOUND\",\n  \"message\": \"Account not found\"\n}")))
+    })
+    public ResponseEntity<String> statement(
+            @Parameter(description = "Account ID") @PathVariable("id") UUID accountId,
+            @Parameter(description = "Start date (YYYY-MM-DD)")
+            @RequestParam(value = "from", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+            @Parameter(description = "End date (YYYY-MM-DD)")
+            @RequestParam(value = "to", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to
+    ) {
+        String csv = exportStatementUseCase.statementCsv(accountId, from, to);
+        return ResponseEntity.ok()
+                .contentType(MediaType.valueOf("text/csv"))
+                .body(csv);
     }
 }
