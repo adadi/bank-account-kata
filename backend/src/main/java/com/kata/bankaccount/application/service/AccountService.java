@@ -116,7 +116,7 @@ public class AccountService implements DepositUseCase, WithdrawUseCase, ListTran
         }
 
         var sb = new StringBuilder();
-        sb.append("date,operation,amount,balanceAfter\n");
+        sb.append("date,operation,amount,balance\n");
         transactionyRepository.findByAccountAndPeriod(accountId, fromInstant, toInstant)
                 .forEach(t -> sb
                         .append(t.getTimestamp()).append(',')

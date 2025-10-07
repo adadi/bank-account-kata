@@ -16,7 +16,6 @@ export function persistPlugin({ store }: PiniaPluginContext) {
       }
     }
   } catch {
-    // ignore
   }
 
   store.$subscribe(
@@ -24,7 +23,6 @@ export function persistPlugin({ store }: PiniaPluginContext) {
       try {
         localStorage.setItem(key, JSON.stringify(state))
       } catch {
-        // ignore
       }
     },
     { detached: true }
