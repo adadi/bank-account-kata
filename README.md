@@ -31,6 +31,9 @@ This project is a simple bank account API. It has three main endpoints: deposit,
 - `GET /v1/accounts/{id}/statement`
 - Health: `GET /actuator/health`
 
+**Swagger**
+http://localhost:8080/swagger-ui/index.html
+
 Example calls (use the default account):
 - Account: `curl http://localhost:8080/v1/accounts/11111111-1111-1111-1111-111111111111`
 - Deposit: `curl -X POST -H 'Content-Type: application/json' -d '{"amount":"50.00","operationId":"<uuid>"}' http://localhost:8080/v1/accounts/11111111-1111-1111-1111-111111111111/deposit`
