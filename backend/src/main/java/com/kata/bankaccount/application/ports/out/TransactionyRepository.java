@@ -1,6 +1,6 @@
 package com.kata.bankaccount.application.ports.out;
 
-import com.kata.bankaccount.application.dto.response.TransactionResponse;
+import com.kata.bankaccount.domain.model.Transaction;
 
 import java.time.Instant;
 import java.util.List;
@@ -13,6 +13,5 @@ public interface TransactionyRepository {
     /**
      * Returns transactions for the given account, filtered by optional period, sorted by timestamp desc.
      */
-    List<TransactionResponse> findByAccountAndPeriod(UUID accountId, Instant from, Instant to);
+    List<Transaction> findByAccountAndPeriod(UUID accountId, Instant from, Instant to);
 }
-

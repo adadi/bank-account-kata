@@ -1,8 +1,8 @@
 package com.kata.bankaccount.adapter.out.persistence;
 
 import com.kata.bankaccount.adapter.out.persistence.jpa.repository.TransactionJpaRepository;
-import com.kata.bankaccount.application.dto.response.TransactionResponse;
 import com.kata.bankaccount.application.ports.out.TransactionyRepository;
+import com.kata.bankaccount.domain.model.Transaction;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +21,7 @@ public class TransactionRepositoryAdapter implements TransactionyRepository {
     }
 
     @Override
-    public List<TransactionResponse> findByAccountAndPeriod(UUID accountId, Instant from, Instant to) {
+    public List<Transaction> findByAccountAndPeriod(UUID accountId, Instant from, Instant to) {
         var entities = (from == null && to == null)
                 ? jpaRepository.findByAccount_IdOrderByTimestampDesc(accountId)
                 : (from == null)
@@ -32,7 +32,8 @@ public class TransactionRepositoryAdapter implements TransactionyRepository {
 
         return entities
                 .stream()
-                .map(e -> new TransactionResponse(
+                .map(e -> Transaction.of(
+                        e.getId(),
                         e.getType(),
                         e.getAmount(),
                         e.getTimestamp(),

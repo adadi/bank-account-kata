@@ -1,0 +1,49 @@
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Build / output
+dist/
+build/
+out/
+public/build/
+.vite/
+.vite/deps/
+.esbuild/
+.cache/
+.parcel-cache/
+.svelte-kit/
+.next/
+.nuxt/
+.astro/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Testing / coverage
+coverage/
+coverage-final.json
+jest.config.ts
+
+# IDE / editors
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Misc
+*.tgz
+*.pem

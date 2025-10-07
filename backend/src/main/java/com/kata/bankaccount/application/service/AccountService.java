@@ -74,6 +74,14 @@ public class AccountService implements DepositUseCase, WithdrawUseCase, ListTran
         Objects.requireNonNull(accountId, "accountId");
         // Ensure account exists → 404 when missing
         accountRepository.lockById(accountId);
-        return transactionyRepository.findByAccountAndPeriod(accountId, from, to);
+        return transactionyRepository.findByAccountAndPeriod(accountId, from, to)
+                .stream()
+                .map(t -> new TransactionResponse(
+                        t.getType(),
+                        t.getAmount(),
+                        t.getTimestamp(),
+                        t.getResultingBalance()
+                ))
+                .toList();
     }
 }
