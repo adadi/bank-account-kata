@@ -72,30 +72,30 @@ Example calls (use the default account):
 - If you use `docker-compose` (with a dash), replace `docker compose` with `docker-compose` in commands (and in `e2e.sh` if needed).
 
 **KATA**
-Bank account kata
-Think of your personal bank account experience
-When in doubt, go for the simplest solution
-Requirements
-• Deposit and Withdrawal
-• Account statement (date, amount, balance)
-• Statement printing
-User Stories
-US 1:
-In order to save money
-As a bank client
-I want to make a deposit in my account
-US 2:
-In order to retrieve some or all of my savings
-As a bank client
-I want to make a withdrawal from my account
+Bank account kata  
+Think of your personal bank account experience  
+When in doubt, go for the simplest solution.  
+Requirements  
+• Deposit and Withdrawal  
+• Account statement (date, amount, balance)  
+• Statement printing  
+User Stories  
+US 1:  
+In order to save money    
+As a bank client  
+I want to make a deposit in my account  
+US 2:  
+In order to retrieve some or all of my savings  
+As a bank client  
+I want to make a withdrawal from my account  
 
 **Run project without docker compose**
 
 Prerequisites
 
-Backend: Java JDK 21, Maven
-Frontend: Node.js 18+ (ideally 20 LTS), npm
-Optional database: PostgreSQL (if you don’t want to use H2)
+Backend: Java JDK 21, Maven  
+Frontend: Node.js 18+ (ideally 20 LTS), npm  
+Optional database: PostgreSQL (if you don’t want to use H2)  
 Free ports:
 8080 (backend), 5173 (frontend dev), 5432 (Postgres),4173 (frontend preview)
 
