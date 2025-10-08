@@ -15,7 +15,7 @@ This project is a simple bank account API. It has three main endpoints: deposit,
   - If a port is busy, edit `docker-compose.yml` and change the port mapping.
 
 **Ports**
-- Front: `http://localhost:80` → make sure nothing else uses port 8080.
+- Front: `http://localhost:80` → make sure nothing else uses port 80.
 - Backend: `http://localhost:8080` → make sure nothing else uses port 8080.
 - PostgreSQL: `localhost:5432` → make sure nothing else uses port 5432.
 
@@ -85,3 +85,81 @@ In order to retrieve some or all of my savings
 As a bank client
 I want to make a withdrawal from my account
 
+**Run project without docker compose**
+
+Prerequisites
+
+Backend: Java JDK 21, Maven
+Frontend: Node.js 18+ (ideally 20 LTS), npm
+Optional database: PostgreSQL (if you don’t want to use H2)
+Free ports:
+8080 (backend), 5173 (frontend dev), 5432 (Postgres),4173 (frontend preview)
+
+Backend — Quick Dev (in-memory H2)
+
+macOS/Linux:
+`cd backend`
+`SPRING_LIQUIBASE_CONTEXTS=e2e mvn spring-boot:run`
+
+Windows PowerShell:
+`cd backend`
+`$env:SPRING_LIQUIBASE_CONTEXTS=“e2e”; mvn spring-boot:run`
+
+Windows CMD: cd backend
+`set SPRING_LIQUIBASE_CONTEXTS=e2e && mvn spring-boot:run`
+
+Why SPRING_LIQUIBASE_CONTEXTS=e2e? It adds the default account
+11111111-1111-1111-1111-111111111111.
+
+Check: Health: http://localhost:8080/actuator/health Swagger:
+http://localhost:8080/swagger-ui/index.html
+
+Backend — With Local PostgreSQL (optional)
+
+Make sure the database bank exists on localhost:5432.
+Replace {YOUR_USERNAME}, and {YOUR_PASSWORD} with your own database information for the following commands:
+Also modify SPRING_DATASOURCE_URL if your database is not local or uses a different port.
+
+macOS/Linux:
+`SPRING_PROFILES_ACTIVE=postgres SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/bank SPRING_DATASOURCE_USERNAME={YOUR_USERNAME} SPRING_DATASOURCE_PASSWORD={YOUR_PASSWORD} SPRING_LIQUIBASE_CONTEXTS=e2e mvn spring-boot:run`
+
+Windows PowerShell:
+`$env:SPRING_PROFILES_ACTIVE="postgres"; $env:SPRING_DATASOURCE_URL="jdbc:postgresql://localhost:5432/bank"; $env:SPRING_DATASOURCE_USERNAME="{YOUR_USERNAME}" $env:SPRING_DATASOURCE_PASSWORD="{YOUR_PASSWORD}"; $env:SPRING_LIQUIBASE_CONTEXTS="e2e"; mvn spring-boot:run`
+
+Backend — Packaged Mode (JAR)
+
+Build:
+`cd backend`
+`mvn -DskipTests package`
+
+Run with H2: macOS/Linux:
+`SPRING_LIQUIBASE_CONTEXTS=e2e java -jar target/bankaccount-0.0.1-SNAPSHOT.jar`
+
+Windows PowerShell:
+`$env:SPRING_LIQUIBASE_CONTEXTS=“e2e”; java -jar target.1-SNAPSHOT.jar`
+
+Run with PostgreSQL: macOS/Linux:
+`SPRING_PROFILES_ACTIVE=postgres SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/bank SPRING_DATASOURCE_USERNAME={YOUR_USERNAME} SPRING_DATASOURCE_PASSWORD={YOUR_PASSWORD} SPRING_LIQUIBASE_CONTEXTS=e2e java -jar target/bankaccount-0.0.1-SNAPSHOT.jar`
+
+
+Frontend — Dev Mode (recommended)
+
+`cd frontend`
+`npm ci`
+`npm run dev`
+
+Open: http://localhost:5173
+
+The proxy sends all requests from /api to http://localhost:8080 (see
+frontend/vite.config.ts:6) The base URL is /api (see frontend/.env:1).
+
+Start the backend before running the frontend.
+
+Frontend — Build
+
+`npm run build`
+`npm run preview`
+
+Note: vite preview does not proxy /api. For local use, prefer npm run
+dev, or serve the dist/ folder behind a proxy that routes /api to
+http://localhost:8080.
