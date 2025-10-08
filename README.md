@@ -1,6 +1,6 @@
-Bank Account Kata — Docker and E2E
+Bank Account Kata
 
-This project is a simple bank account API. It has three main endpoints: deposit, withdraw, and list transactions. It uses PostgreSQL and Liquibase for the database, and Spring Boot for the API.
+This project is a simple bank account API. It has three main endpoints: deposit, withdraw, and list transactions. It uses PostgreSQL and Liquibase for the database, and Spring Boot for the API, with a Vue 3 + Vite frontend.
 
 **Quick Start**
 - Free ports: `80` (front), `8080` (app), `5432` (PostgreSQL).
@@ -101,16 +101,16 @@ Free ports:
 
 Backend — Quick Dev (in-memory H2)
 
-macOS/Linux:
-`cd backend`
+macOS/Linux:  
+`cd backend`  
 `SPRING_LIQUIBASE_CONTEXTS=e2e mvn spring-boot:run`
 
-Windows PowerShell:
-`cd backend`
+Windows PowerShell:  
+`cd backend`  
 `$env:SPRING_LIQUIBASE_CONTEXTS="e2e"; mvn spring-boot:run`
 
-Windows CMD: 
-`cd backend`
+Windows CMD:   
+`cd backend`  
 `set SPRING_LIQUIBASE_CONTEXTS=e2e && mvn spring-boot:run`
 
 Why SPRING_LIQUIBASE_CONTEXTS=e2e? It adds the default account
@@ -125,46 +125,46 @@ Make sure the database bank exists on localhost:5432.
 Replace {YOUR_USERNAME}, and {YOUR_PASSWORD} with your own database information for the following commands:
 Also modify SPRING_DATASOURCE_URL if your database is not local or uses a different port.
 
-macOS/Linux:
-`cd backend`
+macOS/Linux:  
+`cd backend`  
 `SPRING_PROFILES_ACTIVE=postgres SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/bank SPRING_DATASOURCE_USERNAME={YOUR_USERNAME} SPRING_DATASOURCE_PASSWORD={YOUR_PASSWORD} SPRING_LIQUIBASE_CONTEXTS=e2e mvn spring-boot:run`
 
-Windows PowerShell:
-`cd backend`
+Windows PowerShell:  
+`cd backend`  
 `$env:SPRING_PROFILES_ACTIVE="postgres"; $env:SPRING_DATASOURCE_URL="jdbc:postgresql://localhost:5432/bank"; $env:SPRING_DATASOURCE_USERNAME="{YOUR_USERNAME}"; $env:SPRING_DATASOURCE_PASSWORD="{YOUR_PASSWORD}"; $env:SPRING_LIQUIBASE_CONTEXTS="e2e"; mvn spring-boot:run`
 
-Windows CMD:
-`cd backend`
+Windows CMD:  
+`cd backend`  
 `set "SPRING_PROFILES_ACTIVE=postgres" && set "SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/bank" && set "SPRING_DATASOURCE_USERNAME={YOUR_USERNAME}" && set "SPRING_DATASOURCE_PASSWORD={YOUR_PASSWORD}" && set "SPRING_LIQUIBASE_CONTEXTS=e2e" && mvn spring-boot:run`
 
 Backend — Packaged Mode (JAR)
 
-Build:
-`cd backend`
+Build:  
+`cd backend`  
 `mvn -DskipTests package`
 
-Run with H2: macOS/Linux:
+Run with H2: macOS/Linux:  
 `SPRING_LIQUIBASE_CONTEXTS=e2e java -jar target/bankaccount-0.0.1-SNAPSHOT.jar`
 
-Windows PowerShell:
+Windows PowerShell:  
 `$env:SPRING_LIQUIBASE_CONTEXTS="e2e"; java -jar target/bankaccount-0.0.1-SNAPSHOT.jar`
 
-Windows CMD:
+Windows CMD:  
 `set "SPRING_LIQUIBASE_CONTEXTS=e2e" && java -jar target/bankaccount-0.0.1-SNAPSHOT.jar`
 
-Run with PostgreSQL: macOS/Linux:
+Run with PostgreSQL: macOS/Linux:  
 `SPRING_PROFILES_ACTIVE=postgres SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/bank SPRING_DATASOURCE_USERNAME={YOUR_USERNAME} SPRING_DATASOURCE_PASSWORD={YOUR_PASSWORD} SPRING_LIQUIBASE_CONTEXTS=e2e java -jar target/bankaccount-0.0.1-SNAPSHOT.jar`
 
-Run with PostgreSQL: PowerShell:
+Run with PostgreSQL: PowerShell:  
 `$env:SPRING_PROFILES_ACTIVE="postgres"; $env:SPRING_DATASOURCE_URL="jdbc:postgresql://localhost:5432/bank"; $env:SPRING_DATASOURCE_USERNAME="{YOUR_USERNAME}"; $env:SPRING_DATASOURCE_PASSWORD="{YOUR_PASSWORD}"; $env:SPRING_LIQUIBASE_CONTEXTS="e2e"; java -jar target/bankaccount-0.0.1-SNAPSHOT.jar`
 
-Windows CMD:
+Windows CMD:  
 `set "SPRING_PROFILES_ACTIVE=postgres" && set "SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/bank" && set "SPRING_DATASOURCE_USERNAME={YOUR_USERNAME}" && set "SPRING_DATASOURCE_PASSWORD={YOUR_PASSWORD}" && set "SPRING_LIQUIBASE_CONTEXTS=e2e" && java -jar target/bankaccount-0.0.1-SNAPSHOT.jar`
 
 Frontend — Dev Mode (recommended)
 
-`cd frontend`
-`npm ci`
+`cd frontend`  
+`npm ci`  
 `npm run dev`
 
 Open: http://localhost:5173
@@ -176,9 +176,9 @@ Start the backend before running the frontend.
 
 Frontend — Build
 
-`cd frontend`
-`npm ci`
-`npm run build`
+`cd frontend`  
+`npm ci`  
+`npm run build`  
 `npm run preview`
 
 Note: `vite preview` can also proxy `/api` if configured. By default, `preview.proxy` inherits `server.proxy`. 
