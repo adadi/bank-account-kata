@@ -102,16 +102,23 @@ Free ports:
 Backend — Quick Dev (in-memory H2)
 
 macOS/Linux:  
-`cd backend`  
-`SPRING_LIQUIBASE_CONTEXTS=e2e mvn spring-boot:run`
+```bash
+cd backend  
+SPRING_LIQUIBASE_CONTEXTS=e2e mvn spring-boot:run
+```
+
 
 Windows PowerShell:  
-`cd backend`  
-`$env:SPRING_LIQUIBASE_CONTEXTS="e2e"; mvn spring-boot:run`
+```bash
+cd backend  
+$env:SPRING_LIQUIBASE_CONTEXTS="e2e"; mvn spring-boot:run
+```
 
-Windows CMD:   
-`cd backend`  
-`set SPRING_LIQUIBASE_CONTEXTS=e2e && mvn spring-boot:run`
+Windows CMD:
+```bash
+cd backend  
+set SPRING_LIQUIBASE_CONTEXTS=e2e && mvn spring-boot:run
+```
 
 Why SPRING_LIQUIBASE_CONTEXTS=e2e? It adds the default account
 11111111-1111-1111-1111-111111111111.
@@ -126,46 +133,67 @@ Replace {YOUR_USERNAME}, and {YOUR_PASSWORD} with your own database information 
 Also modify SPRING_DATASOURCE_URL if your database is not local or uses a different port.
 
 macOS/Linux:  
-`cd backend`  
-`SPRING_PROFILES_ACTIVE=postgres SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/bank SPRING_DATASOURCE_USERNAME={YOUR_USERNAME} SPRING_DATASOURCE_PASSWORD={YOUR_PASSWORD} SPRING_LIQUIBASE_CONTEXTS=e2e mvn spring-boot:run`
+```bash
+cd backend  
+SPRING_PROFILES_ACTIVE=postgres SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/bank SPRING_DATASOURCE_USERNAME={YOUR_USERNAME} SPRING_DATASOURCE_PASSWORD={YOUR_PASSWORD} SPRING_LIQUIBASE_CONTEXTS=e2e mvn spring-boot:run
+```
 
 Windows PowerShell:  
-`cd backend`  
-`$env:SPRING_PROFILES_ACTIVE="postgres"; $env:SPRING_DATASOURCE_URL="jdbc:postgresql://localhost:5432/bank"; $env:SPRING_DATASOURCE_USERNAME="{YOUR_USERNAME}"; $env:SPRING_DATASOURCE_PASSWORD="{YOUR_PASSWORD}"; $env:SPRING_LIQUIBASE_CONTEXTS="e2e"; mvn spring-boot:run`
-
+```bash
+cd backend  
+$env:SPRING_PROFILES_ACTIVE="postgres"; $env:SPRING_DATASOURCE_URL="jdbc:postgresql://localhost:5432/bank"; $env:SPRING_DATASOURCE_USERNAME="{YOUR_USERNAME}"; $env:SPRING_DATASOURCE_PASSWORD="{YOUR_PASSWORD}"; $env:SPRING_LIQUIBASE_CONTEXTS="e2e"; mvn spring-boot:run
+```
 Windows CMD:  
-`cd backend`  
-`set "SPRING_PROFILES_ACTIVE=postgres" && set "SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/bank" && set "SPRING_DATASOURCE_USERNAME={YOUR_USERNAME}" && set "SPRING_DATASOURCE_PASSWORD={YOUR_PASSWORD}" && set "SPRING_LIQUIBASE_CONTEXTS=e2e" && mvn spring-boot:run`
+```bash
+cd backend  
+set "SPRING_PROFILES_ACTIVE=postgres" && set "SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/bank" && set "SPRING_DATASOURCE_USERNAME={YOUR_USERNAME}" && set "SPRING_DATASOURCE_PASSWORD={YOUR_PASSWORD}" && set "SPRING_LIQUIBASE_CONTEXTS=e2e" && mvn spring-boot:run
+```
 
 Backend — Packaged Mode (JAR)
 
-Build:  
-`cd backend`  
-`mvn -DskipTests package`
+Build:
+```bash
+cd backend
+mvn -DskipTests package
+```
 
 Run with H2: macOS/Linux:  
-`SPRING_LIQUIBASE_CONTEXTS=e2e java -jar target/bankaccount-0.0.1-SNAPSHOT.jar`
+```bash
+SPRING_LIQUIBASE_CONTEXTS=e2e java -jar target/bankaccount-0.0.1-SNAPSHOT.jar
+```
 
 Windows PowerShell:  
-`$env:SPRING_LIQUIBASE_CONTEXTS="e2e"; java -jar target/bankaccount-0.0.1-SNAPSHOT.jar`
+```bash
+$env:SPRING_LIQUIBASE_CONTEXTS="e2e"; java -jar target/bankaccount-0.0.1-SNAPSHOT.jar
+```
 
 Windows CMD:  
-`set "SPRING_LIQUIBASE_CONTEXTS=e2e" && java -jar target/bankaccount-0.0.1-SNAPSHOT.jar`
+```bash
+set "SPRING_LIQUIBASE_CONTEXTS=e2e" && java -jar target/bankaccount-0.0.1-SNAPSHOT.jar
+```
 
 Run with PostgreSQL: macOS/Linux:  
-`SPRING_PROFILES_ACTIVE=postgres SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/bank SPRING_DATASOURCE_USERNAME={YOUR_USERNAME} SPRING_DATASOURCE_PASSWORD={YOUR_PASSWORD} SPRING_LIQUIBASE_CONTEXTS=e2e java -jar target/bankaccount-0.0.1-SNAPSHOT.jar`
+```bash
+SPRING_PROFILES_ACTIVE=postgres SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/bank SPRING_DATASOURCE_USERNAME={YOUR_USERNAME} SPRING_DATASOURCE_PASSWORD={YOUR_PASSWORD} SPRING_LIQUIBASE_CONTEXTS=e2e java -jar target/bankaccount-0.0.1-SNAPSHOT.jar
+```
 
 Run with PostgreSQL: PowerShell:  
-`$env:SPRING_PROFILES_ACTIVE="postgres"; $env:SPRING_DATASOURCE_URL="jdbc:postgresql://localhost:5432/bank"; $env:SPRING_DATASOURCE_USERNAME="{YOUR_USERNAME}"; $env:SPRING_DATASOURCE_PASSWORD="{YOUR_PASSWORD}"; $env:SPRING_LIQUIBASE_CONTEXTS="e2e"; java -jar target/bankaccount-0.0.1-SNAPSHOT.jar`
+```bash
+$env:SPRING_PROFILES_ACTIVE="postgres"; $env:SPRING_DATASOURCE_URL="jdbc:postgresql://localhost:5432/bank"; $env:SPRING_DATASOURCE_USERNAME="{YOUR_USERNAME}"; $env:SPRING_DATASOURCE_PASSWORD="{YOUR_PASSWORD}"; $env:SPRING_LIQUIBASE_CONTEXTS="e2e"; java -jar target/bankaccount-0.0.1-SNAPSHOT.jar
+```
 
 Windows CMD:  
-`set "SPRING_PROFILES_ACTIVE=postgres" && set "SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/bank" && set "SPRING_DATASOURCE_USERNAME={YOUR_USERNAME}" && set "SPRING_DATASOURCE_PASSWORD={YOUR_PASSWORD}" && set "SPRING_LIQUIBASE_CONTEXTS=e2e" && java -jar target/bankaccount-0.0.1-SNAPSHOT.jar`
+```bash
+set "SPRING_PROFILES_ACTIVE=postgres" && set "SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/bank" && set "SPRING_DATASOURCE_USERNAME={YOUR_USERNAME}" && set "SPRING_DATASOURCE_PASSWORD={YOUR_PASSWORD}" && set "SPRING_LIQUIBASE_CONTEXTS=e2e" && java -jar target/bankaccount-0.0.1-SNAPSHOT.jar
+```
 
 Frontend — Dev Mode (recommended)
 
-`cd frontend`  
-`npm ci`  
-`npm run dev`
+```bash
+cd frontend  
+npm ci 
+npm run dev
+```
 
 Open: http://localhost:5173
 
@@ -176,10 +204,12 @@ Start the backend before running the frontend.
 
 Frontend — Build
 
-`cd frontend`  
-`npm ci`  
-`npm run build`  
-`npm run preview`
+```bash
+cd frontend 
+npm ci  
+npm run build  
+npm run preview
+```
 
 Note: `vite preview` can also proxy `/api` if configured. By default, `preview.proxy` inherits `server.proxy`. 
 For local use, `npm run dev` is still recommended (HMR, DX), but `npm run preview` works with the same proxy.
