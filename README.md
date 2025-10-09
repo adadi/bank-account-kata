@@ -117,7 +117,7 @@ $env:SPRING_LIQUIBASE_CONTEXTS="e2e"; mvn spring-boot:run
 Windows CMD:
 ```bash
 cd backend  
-set SPRING_LIQUIBASE_CONTEXTS=e2e && mvn spring-boot:run
+set SPRING_LIQUIBASE_CONTEXTS=e2e; mvn spring-boot:run
 ```
 
 Why SPRING_LIQUIBASE_CONTEXTS=e2e? It adds the default account
@@ -146,7 +146,7 @@ $env:SPRING_PROFILES_ACTIVE="postgres"; $env:SPRING_DATASOURCE_URL="jdbc:postgre
 Windows CMD:  
 ```bash
 cd backend  
-set "SPRING_PROFILES_ACTIVE=postgres" && set "SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/bank" && set "SPRING_DATASOURCE_USERNAME={YOUR_USERNAME}" && set "SPRING_DATASOURCE_PASSWORD={YOUR_PASSWORD}" && set "SPRING_LIQUIBASE_CONTEXTS=e2e" && mvn spring-boot:run
+set "SPRING_PROFILES_ACTIVE=postgres"; set "SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/bank"; set "SPRING_DATASOURCE_USERNAME={YOUR_USERNAME}"; set "SPRING_DATASOURCE_PASSWORD={YOUR_PASSWORD}"; set "SPRING_LIQUIBASE_CONTEXTS=e2e"; mvn spring-boot:run
 ```
 
 Backend — Packaged Mode (JAR)
@@ -169,7 +169,7 @@ $env:SPRING_LIQUIBASE_CONTEXTS="e2e"; java -jar target/bankaccount-0.0.1-SNAPSHO
 
 Windows CMD:  
 ```bash
-set "SPRING_LIQUIBASE_CONTEXTS=e2e" && java -jar target/bankaccount-0.0.1-SNAPSHOT.jar
+set "SPRING_LIQUIBASE_CONTEXTS=e2e"; java -jar target/bankaccount-0.0.1-SNAPSHOT.jar
 ```
 
 Run with PostgreSQL: macOS/Linux:  
@@ -184,7 +184,7 @@ $env:SPRING_PROFILES_ACTIVE="postgres"; $env:SPRING_DATASOURCE_URL="jdbc:postgre
 
 Windows CMD:  
 ```bash
-set "SPRING_PROFILES_ACTIVE=postgres" && set "SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/bank" && set "SPRING_DATASOURCE_USERNAME={YOUR_USERNAME}" && set "SPRING_DATASOURCE_PASSWORD={YOUR_PASSWORD}" && set "SPRING_LIQUIBASE_CONTEXTS=e2e" && java -jar target/bankaccount-0.0.1-SNAPSHOT.jar
+set "SPRING_PROFILES_ACTIVE=postgres"; set "SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/bank"; set "SPRING_DATASOURCE_USERNAME={YOUR_USERNAME}"; set "SPRING_DATASOURCE_PASSWORD={YOUR_PASSWORD}"; set "SPRING_LIQUIBASE_CONTEXTS=e2e"; java -jar target/bankaccount-0.0.1-SNAPSHOT.jar
 ```
 
 Frontend — Dev Mode (recommended)
