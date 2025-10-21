@@ -8,8 +8,13 @@ import java.math.BigDecimal;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+/**
+ * Unit tests for the Account aggregate ensuring arithmetic, validation and
+ * typical Given/When/Then behavior.
+ */
 class AccountTest {
 
+    /** deposit(100) → balance = 100 */
     @Test
     @DisplayName("deposit(100) → balance = 100")
     void depositPositiveAmountUpdatesBalance() {
@@ -20,6 +25,7 @@ class AccountTest {
         assertThat(account.getBalance()).isEqualByComparingTo("100");
     }
 
+    /** deposit(-1) → IllegalArgumentException */
     @Test
     @DisplayName("deposit(-1) → IllegalArgumentException")
     void depositNegativeAmountThrows() {
@@ -29,6 +35,7 @@ class AccountTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
+    /** withdraw(30) after deposit(100) → balance = 70 */
     @Test
     @DisplayName("withdraw(30) after deposit(100) → balance = 70")
     void withdrawAfterDepositUpdatesBalance() {
@@ -40,6 +47,7 @@ class AccountTest {
         assertThat(account.getBalance()).isEqualByComparingTo("70");
     }
 
+    /** withdraw(200) with balance 100 → IllegalStateException */
     @Test
     @DisplayName("withdraw(200) with balance 100 → IllegalStateException")
     void withdrawMoreThanBalanceThrows() {
@@ -50,6 +58,7 @@ class AccountTest {
                 .isInstanceOf(IllegalStateException.class);
     }
 
+    /** withdraw(0) → IllegalArgumentException */
     @Test
     @DisplayName("withdraw(0) → IllegalArgumentException")
     void withdrawNonPositiveAmountThrows() {
@@ -59,6 +68,7 @@ class AccountTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
+    /** Precision: deposit(0.10) ten times → balance = 1.00 */
     @Test
     @DisplayName("Precision: deposit(0.10) ten times → balance = 1.00")
     void depositOneTenthTenTimesEqualsOne() {
@@ -71,6 +81,7 @@ class AccountTest {
         assertThat(account.getBalance()).isEqualByComparingTo("1.00");
     }
 
+    /** Given balance = 100, When I withdraw 30, Then balance = 70 */
     @Test
     @DisplayName("Given balance = 100, When I withdraw 30, Then balance = 70")
     void givenWhenThen_withdrawScenario() {

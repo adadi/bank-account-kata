@@ -25,6 +25,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+/**
+ * Web MVC slice tests for POST /v1/accounts/{id}/withdraw controller endpoint.
+ */
 @WebMvcTest(controllers = AccountsController.class)
 class AccountsControllerWithdrawTest {
 
@@ -37,6 +40,7 @@ class AccountsControllerWithdrawTest {
     @MockBean GetAccountUseCase getAccountUseCase;
     @MockBean ExportStatementUseCase exportStatementUseCase;
 
+    /** Happy path: returns 200 and response JSON. */
     @Test
     void withdraw_returns200_whenOk() throws Exception {
         UUID accountId = UUID.randomUUID();
@@ -58,6 +62,7 @@ class AccountsControllerWithdrawTest {
                 .andExpect(jsonPath("$.balance").value(60.00));
     }
 
+    /** Insufficient funds returns 409 and error code. */
     @Test
     void withdraw_returns409_whenInsufficientFunds() throws Exception {
         UUID accountId = UUID.randomUUID();
@@ -78,6 +83,7 @@ class AccountsControllerWithdrawTest {
                 .andExpect(jsonPath("$.code").value("INSUFFICIENT_FUNDS"));
     }
 
+    /** Bean validation error: amount invalid → 400. */
     @Test
     void withdraw_returns400_whenInvalidAmount() throws Exception {
         UUID accountId = UUID.randomUUID();
@@ -93,6 +99,7 @@ class AccountsControllerWithdrawTest {
                 .andExpect(jsonPath("$.code").value("VALIDATION_ERROR"));
     }
 
+    /** Missing account returns 404 with error code. */
     @Test
     void withdraw_returns404_withErrorJson_whenAccountNotFound() throws Exception {
         UUID accountId = UUID.randomUUID();

@@ -10,16 +10,22 @@ import java.util.UUID;
 public interface AccountRepository {
     /**
      * Load the account by id with a pessimistic lock for update.
+     * @param accountId account identifier
+     * @return locked account
+     * Throws AccountNotFoundException when absent.
      */
     Account lockById(UUID accountId);
 
     /**
      * Persist the account's state (balance and transactions).
+     * @param account account to save
      */
     void save(Account account);
 
     /**
      * Load the account without acquiring a lock. Throws AccountNotFoundException when absent.
+     * @param accountId account identifier
+     * @return account without lock
      */
     Account findById(UUID accountId);
 }

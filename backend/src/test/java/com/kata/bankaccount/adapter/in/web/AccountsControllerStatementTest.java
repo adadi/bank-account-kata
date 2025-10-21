@@ -23,6 +23,10 @@ import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+/**
+ * Web MVC slice tests for GET /v1/accounts/{id}/statement (CSV) covering
+ * content negotiation, parameter parsing and error cases.
+ */
 @WebMvcTest(controllers = AccountsController.class)
 class AccountsControllerStatementTest {
 
@@ -34,6 +38,7 @@ class AccountsControllerStatementTest {
     @MockBean WithdrawUseCase withdrawUseCase;
     @MockBean GetAccountUseCase getAccountUseCase;
 
+    /** Returns CSV content with header and multiple rows. */
     @Test
     void statement_returnsCsv_withHeader_andRows() throws Exception {
         UUID accountId = UUID.randomUUID();
@@ -53,6 +58,7 @@ class AccountsControllerStatementTest {
                 .andExpect(content().string(expected));
     }
 
+    /** Parses from/to date params and forwards as LocalDate to the use case. */
     @Test
     void statement_parsesFromAndToParams_andForwardsToUseCase() throws Exception {
         UUID accountId = UUID.randomUUID();
@@ -70,6 +76,7 @@ class AccountsControllerStatementTest {
         verify(exportStatementUseCase).statementCsv(eq(accountId), eq(LocalDate.parse(from)), eq(LocalDate.parse(to)));
     }
 
+    /** Missing account returns 404 with error code. */
     @Test
     void statement_returns404_whenAccountNotFound() throws Exception {
         UUID accountId = UUID.randomUUID();

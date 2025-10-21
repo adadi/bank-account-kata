@@ -21,6 +21,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
+/**
+ * Unit tests for {@link AccountService#withdraw} covering happy path,
+ * domain error propagation and idempotency.
+ */
 @ExtendWith(MockitoExtension.class)
 class AccountServiceWithdrawTest {
 
@@ -38,11 +42,15 @@ class AccountServiceWithdrawTest {
 
     UUID accountId;
 
+    /** Creates a random account id for each test. */
     @BeforeEach
     void setUp() {
         accountId = UUID.randomUUID();
     }
 
+    /**
+     * Withdraw updates balance, saves account and persists the operation id, creating a WITHDRAWAL transaction.
+     */
     @Test
     void withdraw_callsLockAndSave_updatesBalance_andCreatesTransaction_andPersistsOperation() {
         // Given
@@ -66,6 +74,7 @@ class AccountServiceWithdrawTest {
         verify(operationRepository).save(operationId);
     }
 
+    /** Insufficient funds throws domain exception and nothing is saved. */
     @Test
     void withdraw_propagatesDomainException_andDoesNotSave() {
         // Given
@@ -83,6 +92,7 @@ class AccountServiceWithdrawTest {
         verify(operationRepository, never()).save(any());
     }
 
+    /** Repeating the same operationId is idempotent and does not save again. */
     @Test
     void withdraw_sameOperationId_isIdempotent_noAdditionalSave() {
         // Given

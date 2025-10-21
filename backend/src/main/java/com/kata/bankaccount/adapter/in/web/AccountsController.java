@@ -20,6 +20,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.MediaType;
@@ -31,9 +32,14 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * REST controller exposing operations on bank accounts: read the account,
+ * deposit, withdraw, list transactions and export statement.
+ */
 @RestController
 @RequestMapping("/v1/accounts")
 @Tag(name = "Accounts", description = "Operations on bank accounts")
+@RequiredArgsConstructor
 public class AccountsController {
 
     private final DepositUseCase depositUseCase;
@@ -42,13 +48,6 @@ public class AccountsController {
     private final GetAccountUseCase getAccountUseCase;
     private final ExportStatementUseCase exportStatementUseCase;
 
-    public AccountsController(DepositUseCase depositUseCase, WithdrawUseCase withdrawUseCase, ListTransactionsUseCase listTransactionsUseCase, GetAccountUseCase getAccountUseCase, ExportStatementUseCase exportStatementUseCase) {
-        this.depositUseCase = depositUseCase;
-        this.withdrawUseCase = withdrawUseCase;
-        this.listTransactionsUseCase = listTransactionsUseCase;
-        this.getAccountUseCase = getAccountUseCase;
-        this.exportStatementUseCase = exportStatementUseCase;
-    }
 
     @GetMapping("/{id}")
     @Operation(
@@ -65,10 +64,15 @@ public class AccountsController {
                             schema = @Schema(implementation = com.kata.bankaccount.adapter.in.web.dto.ApiErrorResponse.class),
                             examples = @ExampleObject(value = "{\n  \"code\": \"ACCOUNT_NOT_FOUND\",\n  \"message\": \"Account not found\"\n}")))
     })
+    /**
+     * Returns basic account details.
+     * @param accountId Account identifier
+     * @return Account id and balance
+     */
     public AccountResponse getAccount(
             @Parameter(description = "Account ID") @PathVariable("id") UUID accountId
     ) {
-        return getAccountUseCase.get(accountId);
+        return getAccountUseCase.getAccountById(accountId);
     }
 
     @PostMapping("/{id}/deposit")
@@ -96,6 +100,12 @@ public class AccountsController {
                             schema = @Schema(implementation = com.kata.bankaccount.adapter.in.web.dto.ApiErrorResponse.class),
                             examples = @ExampleObject(value = "{\n  \"code\": \"ACCOUNT_NOT_FOUND\",\n  \"message\": \"Account not found\",\n  \"operationId\": \"11111111-1111-1111-1111-111111111111\"\n}")))
     })
+    /**
+     * Deposit money into an account. Idempotent using the operationId.
+     * @param accountId Account identifier
+     * @param request Deposit request payload
+     * @return Updated balance and whether the deposit was applied
+     */
     public ResponseEntity<DepositResponse> deposit(
             @Parameter(description = "Account ID") @PathVariable("id") UUID accountId,
             @Valid @org.springframework.web.bind.annotation.RequestBody
@@ -135,6 +145,12 @@ public class AccountsController {
                             schema = @Schema(implementation = com.kata.bankaccount.adapter.in.web.dto.ApiErrorResponse.class),
                             examples = @ExampleObject(value = "{\n  \"code\": \"ACCOUNT_NOT_FOUND\",\n  \"message\": \"Account not found\",\n  \"operationId\": \"11111111-1111-1111-1111-111111111111\"\n}")))
     })
+    /**
+     * Withdraw money from an account. Idempotent using the operationId.
+     * @param accountId Account identifier
+     * @param request Withdraw request payload
+     * @return Updated balance
+     */
     public ResponseEntity<WithdrawResponse> withdraw(
             @Parameter(description = "Account ID") @PathVariable("id") UUID accountId,
             @Valid @org.springframework.web.bind.annotation.RequestBody
@@ -161,6 +177,13 @@ public class AccountsController {
                             schema = @Schema(implementation = TransactionResponse.class),
                             examples = @ExampleObject(value = "[\n  {\n    \"type\": \"DEPOSIT\",\n    \"amount\": 100.00,\n    \"timestamp\": \"2024-01-01T10:00:00Z\",\n    \"resultingBalance\": 100.00\n  },\n  {\n    \"type\": \"WITHDRAW\",\n    \"amount\": 40.00,\n    \"timestamp\": \"2024-01-02T11:00:00Z\",\n    \"resultingBalance\": 60.00\n  }\n]")))
     })
+    /**
+     * Lists transactions of an account, optionally filtered by time range.
+     * @param accountId Account identifier
+     * @param from Inclusive start timestamp (optional)
+     * @param to Inclusive end timestamp (optional)
+     * @return List of transactions sorted by timestamp desc
+     */
     public List<TransactionResponse> transactions(
             @Parameter(description = "Account ID") @PathVariable("id") UUID accountId,
             @Parameter(description = "Start of time range (ISO-8601)")
@@ -187,6 +210,13 @@ public class AccountsController {
                             schema = @Schema(implementation = com.kata.bankaccount.adapter.in.web.dto.ApiErrorResponse.class),
                             examples = @ExampleObject(value = "{\n  \"code\": \"ACCOUNT_NOT_FOUND\",\n  \"message\": \"Account not found\"\n}")))
     })
+    /**
+     * Exports the account statement as CSV.
+     * @param accountId Account identifier
+     * @param from Inclusive start date (optional)
+     * @param to Inclusive end date (optional)
+     * @return CSV content
+     */
     public ResponseEntity<String> statement(
             @Parameter(description = "Account ID") @PathVariable("id") UUID accountId,
             @Parameter(description = "Start date (YYYY-MM-DD)")

@@ -28,6 +28,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+/**
+ * Integration tests for the withdraw HTTP endpoint covering idempotency,
+ * concurrency (pessimistic locking) and error scenarios.
+ */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @AutoConfigureMockMvc
 class WithdrawIntegrationTest {
@@ -38,12 +42,16 @@ class WithdrawIntegrationTest {
 
     UUID accountId;
 
+    /** Prepares an account with 100.00 balance for each test. */
     @BeforeEach
     void setup() {
         accountId = UUID.randomUUID();
         accountJpaRepository.save(new AccountEntity(accountId, new BigDecimal("100.00")));
     }
 
+    /**
+     * Repeating a withdraw request with same operationId does not double-apply.
+     */
     @Test
     void withdraw_isIdempotent_forSameOperationId() throws Exception {
         // Given
@@ -72,6 +80,10 @@ class WithdrawIntegrationTest {
         assertThat(accountEntity.getTransactions().get(0).getType()).isEqualTo(TransactionType.WITHDRAWAL);
     }
 
+    /**
+     * Two concurrent withdrawals for 80 on balance 100: one succeeds (200), one conflicts (409),
+     * final balance is 20 with a single WITHDRAWAL transaction.
+     */
     @Test
     @Timeout(10)
     void concurrent_withdrawals_onlyOneSucceeds_andBalanceIs20() throws Exception {
@@ -130,6 +142,7 @@ class WithdrawIntegrationTest {
                 .getResponse()
                 .getStatus();
     }
+    /** Missing account returns 404 and error code. */
     @Test
     void withdraw_nonExistentAccount_returns404_withCode() throws Exception {
         UUID missingAccountId = UUID.randomUUID();

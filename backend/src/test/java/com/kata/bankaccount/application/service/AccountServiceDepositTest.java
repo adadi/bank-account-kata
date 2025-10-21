@@ -3,7 +3,7 @@ package com.kata.bankaccount.application.service;
 import com.kata.bankaccount.application.dto.response.DepositResponse;
 import com.kata.bankaccount.application.ports.out.AccountRepository;
 import com.kata.bankaccount.application.ports.out.OperationRepository;
-import com.kata.bankaccount.application.ports.out.TransactionyRepository;
+import com.kata.bankaccount.application.ports.out.TransactionRepository;
 import com.kata.bankaccount.domain.model.Account;
 import com.kata.bankaccount.domain.model.TransactionType;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,6 +23,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
+/**
+ * Unit tests for {@link AccountService#deposit} ensuring idempotency,
+ * domain validation and persistence interactions.
+ */
 @ExtendWith(MockitoExtension.class)
 class AccountServiceDepositTest {
 
@@ -30,7 +34,7 @@ class AccountServiceDepositTest {
     @Mock
     OperationRepository operationRepository;
     @Mock
-    TransactionyRepository transactionyRepository;
+    TransactionRepository transactionRepository;
 
     @InjectMocks
     AccountService accountService;
@@ -40,12 +44,14 @@ class AccountServiceDepositTest {
     UUID accountId;
     UUID operationId;
 
+    /** Initializes random ids for each test. */
     @BeforeEach
     void setUp() {
         accountId = UUID.randomUUID();
         operationId = UUID.randomUUID();
     }
 
+    /** New deposit is applied and returns applied=true. */
     @Test
     void deposit_positiveAmount_returnsAppliedTrue() {
         // Given
@@ -62,6 +68,7 @@ class AccountServiceDepositTest {
         verify(accountRepository, times(1)).lockById(accountId);
     }
 
+    /** Deposit persists account and adds a DEPOSIT transaction with correct details. */
     @Test
     void deposit_positiveAmount_saves_andCreatesTransaction_details() {
         // Given
@@ -82,6 +89,7 @@ class AccountServiceDepositTest {
         verify(operationRepository).save(operationId);
     }
 
+    /** Non-positive amount is rejected and nothing is saved. */
     @Test
     void deposit_nonPositiveAmount_throws_andDoesNotSave() {
         // Given
@@ -97,6 +105,7 @@ class AccountServiceDepositTest {
         verify(operationRepository, never()).save(any());
     }
 
+    /** Repeating the same operationId is idempotent and returns applied=false. */
     @Test
     void deposit_sameOperationId_isIdempotent_noAdditionalSave_andReturnsAppliedFalse() {
         // Given

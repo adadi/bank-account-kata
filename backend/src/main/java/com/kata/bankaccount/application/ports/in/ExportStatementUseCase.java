@@ -9,9 +9,12 @@ import java.util.UUID;
 public interface ExportStatementUseCase {
 
     /**
-     * Returns the CSV content for the account statement, with header.
-     * Columns: date,operation,amount,balanceAfter
-     * from/to are calendar dates (UTC), optional.
+     * Generates a CSV statement for the given account and optional date range.
+     * Columns: date,operation,amount,balance
+     * @param accountId account identifier
+     * @param from inclusive start date (optional, UTC)
+     * @param to inclusive end date (optional, UTC)
+     * @return CSV content with header
      */
     String statementCsv(UUID accountId, LocalDate from, LocalDate to);
 }

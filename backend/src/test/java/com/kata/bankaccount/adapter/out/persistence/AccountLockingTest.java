@@ -22,6 +22,11 @@ import java.util.concurrent.Executors;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+/**
+ * Integration test asserting that the JPA repository method {@code lockById}
+ * uses a pessimistic write lock (SELECT FOR UPDATE) by provoking a timeout
+ * on a concurrent lock attempt.
+ */
 @SpringBootTest
 class AccountLockingTest {
 
@@ -34,11 +39,16 @@ class AccountLockingTest {
 
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
+    /** Shuts down the single-thread executor created for the test. */
     @AfterEach
     void tearDown() {
         executor.shutdownNow();
     }
 
+    /**
+     * First transaction acquires a lock; second transaction with short lock timeout
+     * fails to acquire it, demonstrating pessimistic locking.
+     */
     @Test
     void lockById_usesPessimisticWrite_selectForUpdate() throws Exception {
         UUID accountId = UUID.randomUUID();

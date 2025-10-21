@@ -11,7 +11,8 @@ import com.kata.bankaccount.application.ports.in.ListTransactionsUseCase;
 import com.kata.bankaccount.application.ports.in.WithdrawUseCase;
 import com.kata.bankaccount.application.ports.out.AccountRepository;
 import com.kata.bankaccount.application.ports.out.OperationRepository;
-import com.kata.bankaccount.application.ports.out.TransactionyRepository;
+import com.kata.bankaccount.application.ports.out.TransactionRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,19 +24,17 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+/**
+ * Application service orchestrating domain operations and persistence for accounts.
+ * Implements the input ports exposed to the web layer.
+ */
 @Service
+@RequiredArgsConstructor
 public class AccountService implements DepositUseCase, WithdrawUseCase, ListTransactionsUseCase, GetAccountUseCase, ExportStatementUseCase {
     private final AccountRepository accountRepository;
     private final OperationRepository operationRepository;
-    private final TransactionyRepository transactionyRepository;
+    private final TransactionRepository transactionRepository;
 
-    public AccountService(AccountRepository accountRepository,
-                          OperationRepository operationRepository,
-                          TransactionyRepository transactionyRepository) {
-        this.accountRepository = accountRepository;
-        this.operationRepository = operationRepository;
-        this.transactionyRepository = transactionyRepository;
-    }
 
     @Override
     @Transactional
@@ -79,7 +78,7 @@ public class AccountService implements DepositUseCase, WithdrawUseCase, ListTran
         Objects.requireNonNull(accountId, "accountId");
         // Ensure account exists → 404 when missing
         accountRepository.lockById(accountId);
-        return transactionyRepository.findByAccountAndPeriod(accountId, from, to)
+        return transactionRepository.findByAccountAndPeriod(accountId, from, to)
                 .stream()
                 .map(t -> new TransactionResponse(
                         t.getType(),
@@ -92,7 +91,7 @@ public class AccountService implements DepositUseCase, WithdrawUseCase, ListTran
 
     @Override
     @Transactional(readOnly = true)
-    public AccountResponse get(UUID accountId) {
+    public AccountResponse getAccountById(UUID accountId) {
         Objects.requireNonNull(accountId, "accountId");
         var account = accountRepository.findById(accountId);
         return new AccountResponse(account.getId(), account.getBalance());
@@ -117,7 +116,7 @@ public class AccountService implements DepositUseCase, WithdrawUseCase, ListTran
 
         var sb = new StringBuilder();
         sb.append("date,operation,amount,balance\n");
-        transactionyRepository.findByAccountAndPeriod(accountId, fromInstant, toInstant)
+        transactionRepository.findByAccountAndPeriod(accountId, fromInstant, toInstant)
                 .forEach(t -> sb
                         .append(t.getTimestamp()).append(',')
                         .append(t.getType()).append(',')

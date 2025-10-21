@@ -157,6 +157,26 @@ cd backend
 mvn -DskipTests package
 ```
 
+Backend — Javadoc
+
+The project is configured to generate Javadoc including private members.
+
+Generate Javadoc HTML:
+```bash
+cd backend
+mvn javadoc:javadoc
+```
+The documentation will be generated in `backend/target/apidocs/index.html`.
+
+Generate Javadoc JAR:
+```bash
+cd backend
+mvn javadoc:jar
+```
+The JAR will be created at `backend/target/bankaccount-0.0.1-SNAPSHOT-javadoc.jar`.
+
+Note: The Javadoc JAR is automatically generated when running `mvn package`.
+
 Run with H2: macOS/Linux:  
 ```bash
 SPRING_LIQUIBASE_CONTEXTS=e2e java -jar target/bankaccount-0.0.1-SNAPSHOT.jar

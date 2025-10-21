@@ -3,7 +3,7 @@ package com.kata.bankaccount.application.service;
 import com.kata.bankaccount.application.dto.response.TransactionResponse;
 import com.kata.bankaccount.application.ports.out.AccountRepository;
 import com.kata.bankaccount.application.ports.out.OperationRepository;
-import com.kata.bankaccount.application.ports.out.TransactionyRepository;
+import com.kata.bankaccount.application.ports.out.TransactionRepository;
 import com.kata.bankaccount.domain.exception.AccountNotFoundException;
 import com.kata.bankaccount.domain.model.Account;
 import com.kata.bankaccount.domain.model.Transaction;
@@ -25,22 +25,29 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
+/**
+ * Unit tests for {@link AccountService#transactions} ensuring repository calls,
+ * mapping to response and error propagation on missing account.
+ */
 @ExtendWith(MockitoExtension.class)
 class AccountServiceTransactionsTest {
 
     @Mock AccountRepository accountRepository;
     @Mock OperationRepository operationRepository;
-    @Mock TransactionyRepository transactionyRepository;
+    @Mock
+    TransactionRepository transactionRepository;
 
     @InjectMocks AccountService service;
 
     UUID accountId;
 
+    /** Initializes a random account id per test. */
     @BeforeEach
     void setUp() {
         accountId = UUID.randomUUID();
     }
 
+    /** Happy path: maps repository transactions to API response values. */
     @Test
     void transactions_callsLockAndRepo_andMapsToResponse() {
         // Given
@@ -54,7 +61,7 @@ class AccountServiceTransactionsTest {
         var t2 = Transaction.of(UUID.randomUUID(), TransactionType.WITHDRAWAL,
                 new BigDecimal("30.00"), Instant.parse("2024-01-02T11:00:00Z"), new BigDecimal("70.00"));
 
-        when(transactionyRepository.findByAccountAndPeriod(accountId, from, to))
+        when(transactionRepository.findByAccountAndPeriod(accountId, from, to))
                 .thenReturn(List.of(t2, t1)); // already sorted desc by repo
 
         // When
@@ -62,7 +69,7 @@ class AccountServiceTransactionsTest {
 
         // Then
         verify(accountRepository, times(1)).lockById(accountId);
-        verify(transactionyRepository, times(1)).findByAccountAndPeriod(accountId, from, to);
+        verify(transactionRepository, times(1)).findByAccountAndPeriod(accountId, from, to);
 
         assertThat(res).hasSize(2);
         assertThat(res.get(0).type()).isEqualTo(TransactionType.WITHDRAWAL);
@@ -76,20 +83,22 @@ class AccountServiceTransactionsTest {
         assertThat(res.get(1).resultingBalance()).isEqualByComparingTo("100.00");
     }
 
+    /** Null period is forwarded as nulls to repo and returns empty list. */
     @Test
     void transactions_withNullPeriod_forwardsNullsToRepo_andReturnsEmptyList() {
         // Given
         when(accountRepository.lockById(accountId)).thenReturn(new Account(accountId, BigDecimal.ZERO));
-        when(transactionyRepository.findByAccountAndPeriod(any(), any(), any())).thenReturn(List.of());
+        when(transactionRepository.findByAccountAndPeriod(any(), any(), any())).thenReturn(List.of());
 
         // When
         List<TransactionResponse> res = service.transactions(accountId, null, null);
 
         // Then
-        verify(transactionyRepository).findByAccountAndPeriod(eq(accountId), isNull(), isNull());
+        verify(transactionRepository).findByAccountAndPeriod(eq(accountId), isNull(), isNull());
         assertThat(res).isEmpty();
     }
 
+    /** Missing account triggers AccountNotFoundException and no repo call. */
     @Test
     void transactions_missingAccount_throwsAccountNotFound() {
         // Given
@@ -97,7 +106,6 @@ class AccountServiceTransactionsTest {
 
         // When / Then
         assertThrows(AccountNotFoundException.class, () -> service.transactions(accountId, null, null));
-        verify(transactionyRepository, never()).findByAccountAndPeriod(any(), any(), any());
+        verify(transactionRepository, never()).findByAccountAndPeriod(any(), any(), any());
     }
 }
-

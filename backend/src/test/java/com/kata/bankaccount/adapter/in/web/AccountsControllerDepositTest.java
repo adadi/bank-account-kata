@@ -25,6 +25,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+/**
+ * Web MVC slice tests for POST /v1/accounts/{id}/deposit controller endpoint.
+ */
 @WebMvcTest(controllers = AccountsController.class)
 class AccountsControllerDepositTest {
 
@@ -37,6 +40,7 @@ class AccountsControllerDepositTest {
     @MockBean GetAccountUseCase getAccountUseCase;
     @MockBean ExportStatementUseCase exportStatementUseCase;
 
+    /** Missing account returns 404 with error code. */
     @Test
     void deposit_returns404_whenAccountNotFound() throws Exception {
         UUID accountId = UUID.randomUUID();

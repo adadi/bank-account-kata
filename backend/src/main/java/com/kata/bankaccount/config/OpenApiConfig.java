@@ -7,6 +7,9 @@ import io.swagger.v3.oas.annotations.info.License;
 import io.swagger.v3.oas.annotations.servers.Server;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * Central OpenAPI/Swagger configuration for the HTTP API docs.
+ */
 @Configuration
 @OpenAPIDefinition(
         info = @Info(
@@ -22,4 +25,3 @@ import org.springframework.context.annotation.Configuration;
 )
 public class OpenApiConfig {
 }
-

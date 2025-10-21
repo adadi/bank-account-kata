@@ -3,10 +3,11 @@ package com.kata.bankaccount.adapter.out.persistence;
 import com.kata.bankaccount.adapter.out.persistence.jpa.entity.AccountEntity;
 import com.kata.bankaccount.adapter.out.persistence.jpa.entity.TransactionEntity;
 import com.kata.bankaccount.adapter.out.persistence.jpa.repository.AccountJpaRepository;
-import com.kata.bankaccount.domain.exception.AccountNotFoundException;
 import com.kata.bankaccount.application.ports.out.AccountRepository;
+import com.kata.bankaccount.domain.exception.AccountNotFoundException;
 import com.kata.bankaccount.domain.model.Account;
 import com.kata.bankaccount.domain.model.Transaction;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,15 +15,16 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+/**
+ * JPA-based implementation of the {@link AccountRepository} port.
+ */
 @Repository
 @Transactional
+@RequiredArgsConstructor
 public class AccountRepositoryAdapter implements AccountRepository {
 
     private final AccountJpaRepository accountJpaRepository;
 
-    public AccountRepositoryAdapter(AccountJpaRepository accountJpaRepository) {
-        this.accountJpaRepository = accountJpaRepository;
-    }
 
     @Override
     public Account lockById(UUID accountId) {

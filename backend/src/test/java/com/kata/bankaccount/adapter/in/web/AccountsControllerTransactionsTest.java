@@ -29,6 +29,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+/**
+ * Web MVC slice tests for GET /v1/accounts/{id}/transactions endpoint,
+ * including parameter parsing and error scenarios.
+ */
 @WebMvcTest(controllers = AccountsController.class)
 class AccountsControllerTransactionsTest {
 
@@ -41,6 +45,7 @@ class AccountsControllerTransactionsTest {
     @MockBean GetAccountUseCase getAccountUseCase;
     @MockBean ExportStatementUseCase exportStatementUseCase;
 
+    /** Returns a list of transactions in descending order with expected shape. */
     @Test
     void transactions_returnsList_sortedDesc_shapeOk() throws Exception {
         UUID accountId = UUID.randomUUID();
@@ -64,6 +69,7 @@ class AccountsControllerTransactionsTest {
                 .andExpect(jsonPath("$[2].amount").value(100.00));
     }
 
+    /** Parses from/to query params and forwards as Instant to the use case. */
     @Test
     void transactions_parsesFromAndToParams_andForwardsToUseCase() throws Exception {
         UUID accountId = UUID.randomUUID();
@@ -81,6 +87,7 @@ class AccountsControllerTransactionsTest {
         verify(listTransactionsUseCase).transactions(eq(accountId), eq(Instant.parse(from)), eq(Instant.parse(to)));
     }
 
+    /** Missing account returns 404 with error code. */
     @Test
     void transactions_returns404_whenAccountNotFound() throws Exception {
         UUID accountId = UUID.randomUUID();

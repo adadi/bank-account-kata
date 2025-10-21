@@ -21,6 +21,9 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+/**
+ * Web MVC slice tests for GET /v1/accounts/{id} controller endpoint.
+ */
 @WebMvcTest(controllers = AccountsController.class)
 class AccountsControllerGetTest {
 
@@ -33,10 +36,11 @@ class AccountsControllerGetTest {
     @MockBean GetAccountUseCase getAccountUseCase;
     @MockBean ExportStatementUseCase exportStatementUseCase;
 
+    /** Returns 200 with account JSON payload. */
     @Test
     void getAccount_returns200() throws Exception {
         UUID id = UUID.randomUUID();
-        when(getAccountUseCase.get(id)).thenReturn(new AccountResponse(id, new BigDecimal("0.00")));
+        when(getAccountUseCase.getAccountById(id)).thenReturn(new AccountResponse(id, new BigDecimal("0.00")));
 
         mvc.perform(get("/v1/accounts/{id}", id))
                 .andExpect(status().isOk())
@@ -45,10 +49,11 @@ class AccountsControllerGetTest {
                 .andExpect(jsonPath("$.balance").exists());
     }
 
+    /** Missing account returns 404 with error code. */
     @Test
     void getAccount_returns404_whenMissing() throws Exception {
         UUID id = UUID.randomUUID();
-        when(getAccountUseCase.get(id)).thenThrow(new AccountNotFoundException(id));
+        when(getAccountUseCase.getAccountById(id)).thenThrow(new AccountNotFoundException(id));
 
         mvc.perform(get("/v1/accounts/{id}", id))
                 .andExpect(status().isNotFound())

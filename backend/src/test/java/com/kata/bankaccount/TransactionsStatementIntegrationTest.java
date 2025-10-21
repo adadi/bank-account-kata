@@ -24,6 +24,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+/**
+ * Integration tests for listing transactions and CSV statement export
+ * ensuring order, field correctness and period filtering.
+ */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @AutoConfigureMockMvc
 class TransactionsStatementIntegrationTest {
@@ -34,12 +38,17 @@ class TransactionsStatementIntegrationTest {
 
     UUID accountId;
 
+    /** Creates a new account with zero balance for each test. */
     @BeforeEach
     void setup() {
         accountId = UUID.randomUUID();
         accountJpaRepository.save(new AccountEntity(accountId, BigDecimal.ZERO));
     }
 
+    /**
+     * After D(100), W(30), D(10), the transactions endpoint returns 3 rows sorted desc
+     * with expected resulting balances and period filtering works from a given timestamp.
+     */
     @Test
     void statement_returnsRows_sortedDesc_andFieldsAreCorrect() throws Exception {
         // Given: 3 operations Deposit 100, Withdraw 30, Deposit 10
@@ -98,6 +107,7 @@ class TransactionsStatementIntegrationTest {
                 .isAfterOrEqualTo(withdrawalTs);
     }
 
+    /** Missing account returns 404 and error code. */
     @Test
     void transactions_nonExistentAccount_returns404_withCode() throws Exception {
         UUID missingAccountId = UUID.randomUUID();
@@ -108,6 +118,7 @@ class TransactionsStatementIntegrationTest {
                 .andExpect(jsonPath("$.code").value("ACCOUNT_NOT_FOUND"));
     }
 
+    /** Helper to call the deposit endpoint. */
     private org.springframework.test.web.servlet.ResultActions callDeposit(UUID accountId, String amount, UUID operationId) throws Exception {
         var body = Map.of(
                 "amount", amount,
@@ -118,6 +129,7 @@ class TransactionsStatementIntegrationTest {
                 .content(objectMapper.writeValueAsString(body)));
     }
 
+    /** Helper to call the withdraw endpoint. */
     private org.springframework.test.web.servlet.ResultActions callWithdraw(UUID accountId, String amount, UUID operationId) throws Exception {
         var body = Map.of(
                 "amount", amount,
@@ -128,4 +140,3 @@ class TransactionsStatementIntegrationTest {
                 .content(objectMapper.writeValueAsString(body)));
     }
 }
-

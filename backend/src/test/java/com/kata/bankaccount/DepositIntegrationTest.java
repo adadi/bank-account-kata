@@ -21,6 +21,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+/**
+ * Integration tests for the deposit HTTP endpoint using MockMvc and a real
+ * persistence layer. Verifies idempotency, 404 handling and DB effects.
+ */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @AutoConfigureMockMvc
 class DepositIntegrationTest {
@@ -31,12 +35,16 @@ class DepositIntegrationTest {
 
     UUID accountId;
 
+    /** Prepares a fresh account with zero balance for each test. */
     @BeforeEach
     void setup() {
         accountId = UUID.randomUUID();
         accountJpaRepository.save(new AccountEntity(accountId, BigDecimal.ZERO));
     }
 
+    /**
+     * Depositing 50 increases balance and creates one DEPOSIT transaction.
+     */
     @Test
     void deposit_increasesBalance_andAddsTransactionRow() throws Exception {
         // Given
@@ -59,6 +67,9 @@ class DepositIntegrationTest {
         assertThat(accountEntity.getTransactions().get(0).getType()).isEqualTo(TransactionType.DEPOSIT);
     }
 
+    /**
+     * Two identical requests with the same operationId result in a single applied deposit.
+     */
     @Test
     void deposit_isIdempotent_forSameOperationId() throws Exception {
         // Given
@@ -87,6 +98,9 @@ class DepositIntegrationTest {
         assertThat(accountEntity.getTransactions().get(0).getType()).isEqualTo(TransactionType.DEPOSIT);
     }
 
+    /**
+     * Depositing to a missing account returns 404 with error code.
+     */
     @Test
     void deposit_nonExistentAccount_returns404_withCode() throws Exception {
         UUID missingAccountId = UUID.randomUUID();
@@ -101,4 +115,5 @@ class DepositIntegrationTest {
                         .content(objectMapper.writeValueAsString(body)))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.code").value("ACCOUNT_NOT_FOUND"));
-    }}
+    }
+}

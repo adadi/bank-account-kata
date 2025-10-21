@@ -1,8 +1,9 @@
 package com.kata.bankaccount.adapter.out.persistence;
 
 import com.kata.bankaccount.adapter.out.persistence.jpa.repository.TransactionJpaRepository;
-import com.kata.bankaccount.application.ports.out.TransactionyRepository;
+import com.kata.bankaccount.application.ports.out.TransactionRepository;
 import com.kata.bankaccount.domain.model.Transaction;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -10,15 +11,15 @@ import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * JPA-based read adapter for account transactions.
+ */
 @Repository
 @Transactional(readOnly = true)
-public class TransactionRepositoryAdapter implements TransactionyRepository {
+@RequiredArgsConstructor
+public class TransactionRepositoryAdapter implements TransactionRepository {
 
     private final TransactionJpaRepository jpaRepository;
-
-    public TransactionRepositoryAdapter(TransactionJpaRepository jpaRepository) {
-        this.jpaRepository = jpaRepository;
-    }
 
     @Override
     public List<Transaction> findByAccountAndPeriod(UUID accountId, Instant from, Instant to) {
